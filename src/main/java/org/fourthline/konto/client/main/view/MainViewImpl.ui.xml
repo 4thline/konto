@@ -1,0 +1,118 @@
+<!--
+  ~ Copyright (C) 2011 4th Line GmbH, Switzerland
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:w="urn:import:org.seamless.gwt.component.client.widget"
+             xmlns:ledger="urn:import:org.fourthline.konto.client.ledger.view">
+
+    <ui:with field="bundle" type="org.fourthline.konto.client.bundle.Bundle"/>
+    <ui:with field="themeBundle" type="org.seamless.gwt.theme.shared.client.ThemeBundle"/>
+    <ui:with field="themeStyle" type="org.seamless.gwt.theme.shared.client.ThemeStyle"/>
+
+    <ui:style>
+
+        .ToolbarContainer {
+            background-color: #7d858b;
+        }
+
+        .productVersion {
+            text-align: right;
+            padding: 0.5em 0.5em 0 0;
+        }
+
+        .productVersion a,
+        .productVersion a:visited,
+        .productVersion a:hover,
+        .productVersion a:active {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: x-small;
+        }
+
+        .sidebarPanel {
+
+        }
+
+        .contentPanel {
+        }
+
+    </ui:style>
+
+    <g:DockLayoutPanel unit="EM">
+        <g:center>
+            <g:SplitLayoutPanel ui:field="mainSplitPanel">
+                <g:west size="333">
+                    <g:DockLayoutPanel ui:field="sidebarPanel">
+                        <g:north size="9">
+                            <g:HTMLPanel addStyleNames="{themeStyle.ToolbarContainer} {style.ToolbarContainer}">
+                                <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+                                    <tr>
+                                        <td class="{style.productVersion}" colspan="4">
+                                            <a href="http://4thline.org/projects/konto/">Konto v1.0-beta1</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="{themeStyle.ToolbarCell}">
+                                            <w:ImageTextButton addStyleNames="{themeStyle.ToolbarButtonCentered}"
+                                                               ui:field="dashboardButton"
+                                                               text="Home"
+                                                               centered="true"
+                                                               imageResource="{themeBundle.icon48.home}"/>
+                                        </td>
+                                        <td class="{themeStyle.ToolbarCell}">
+                                            <w:ImageTextButton addStyleNames="{themeStyle.ToolbarButtonCentered}"
+                                                               ui:field="reportButton"
+                                                               text="Reports"
+                                                               centered="true"
+                                                               imageResource="{bundle.icon48.report}"/>
+                                        </td>
+                                        <td class="{themeStyle.ToolbarCell}">
+                                            <w:ImageTextButton addStyleNames="{themeStyle.ToolbarButtonCentered}"
+                                                               ui:field="currencyButton"
+                                                               text="Currencies"
+                                                               centered="true"
+                                                               imageResource="{bundle.icon48.currency}"/>
+                                        </td>
+                                        <td class="{themeStyle.ToolbarCell}">
+                                            <w:ImageTextButton addStyleNames="{themeStyle.ToolbarButtonCentered}"
+                                                               ui:field="settingsButton"
+                                                               text="Settings"
+                                                               centered="true"
+                                                               imageResource="{themeBundle.icon48.settings}"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </g:HTMLPanel>
+                        </g:north>
+                        <g:center>
+                            <g:DockLayoutPanel unit="EM" addStyleNames="{style.sidebarPanel}">
+                                <g:center>
+                                    <ledger:LedgerSidebarView ui:field="ledgerSidebarView"/>
+                                </g:center>
+                            </g:DockLayoutPanel>
+                        </g:center>
+                    </g:DockLayoutPanel>
+                </g:west>
+                <g:center>
+                    <w:SimpleLayoutPanel ui:field="contentPanel" addStyleNames="{style.contentPanel}"/>
+                </g:center>
+            </g:SplitLayoutPanel>
+        </g:center>
+    </g:DockLayoutPanel>
+
+</ui:UiBinder>

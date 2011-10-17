@@ -1,0 +1,127 @@
+/*
+ * Copyright (C) 2011 4th Line GmbH, Switzerland
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+.table {
+    width: 100%;
+}
+
+.rowOdd {
+    background: #eeeeee;
+}
+
+.rowEven {
+}
+
+.groupRow {
+    font-weight: bold;
+    background: #e7e9eb;
+}
+
+.accountRow {
+
+}
+
+.entryRow {
+}
+
+.entryLabelCell {
+}
+
+.entryFromToAccountCell {
+}
+
+.groupLabelCell,
+.accountLabelCell,
+.entryLabelCell,
+.entryFromToAccountCell,
+.entryEffectiveOnCell {
+    padding-top: 0.25em;
+}
+
+.groupAmountCell,
+.accountAmountCell,
+.accountAmountGroupedCell,
+.entryEffectiveOnCell,
+.entryAmountCell,
+.entryLabelCell,
+.entryFromToAccountCell {
+    white-space: nowrap;
+    vertical-align: top;
+}
+
+.accountLabelCell,
+.accountAmountCell,
+.accountAmountGroupedCell {
+    border-top: 1px solid #a1a6ab;
+}
+
+.accountLabelCell a,
+.entryLabelCell a,
+.entryFromToAccountCell a {
+    color: black;
+    text-decoration: none;
+}
+
+.accountLabelCell a:hover,
+.entryLabelCell a:hover,
+.entryFromToAccountCell a:hover {
+    text-decoration: underline;
+}
+
+.groupAmountCell,
+.accountAmountCell,
+.accountAmountGroupedCell,
+.entryAmountCell {
+    padding-top: 0.25em;
+    text-align: right;
+    width: 8em;
+    font-weight: bold;
+}
+
+.accountAmountGroupedCell,
+.entryAmountCell {
+    font-weight: normal;
+}
+
+.accountAmountGroupedCell {
+    padding-right: 2em;
+}
+
+.entryEffectiveOnCell,
+.entryLabelCell,
+.entryFromToAccountCell {
+    font-size: smaller;
+    padding-left: 1em;
+    padding-right: 1em;
+    vertical-align: top;
+}
+
+.entryAmountCell {
+    font-size: smaller;
+    padding-right: 2.5em;
+}
+
+.entryEffectiveOnCell {
+    width: 5em;
+}
+
+.accountExchangeCell {
+    padding-left: 1em;
+    font-style: italic;
+    font-size: smaller;
+    text-align: left;
+}

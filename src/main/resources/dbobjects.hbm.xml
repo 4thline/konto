@@ -1,0 +1,286 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <database-object>
+        <create>alter table ACCOUNT_OPTION add constraint FK_ACCOUNT_OPTION_USER_ID foreign key (USER_ID) references USERS(USER_ID) on delete cascade</create>
+        <drop>alter table ACCOUNT_OPTION drop constraint FK_ACCOUNT_OPTION_USER_ID </drop>
+    </database-object>
+
+    <database-object>
+        <create>alter table GLOBAL_OPTION add constraint FK_GLOBAL_OPTION_USER_ID foreign key (USER_ID) references USERS(USER_ID) on delete cascade</create>
+        <drop>alter table GLOBAL_OPTION drop constraint FK_GLOBAL_OPTION_USER_ID</drop>
+    </database-object>
+
+    <database-object>
+        <create>alter table ACCOUNT_OPTION add constraint FK_ACCOUNT_OPTION_ACCOUNT_ID foreign key (ACCOUNT_ID) references ACCOUNT(ACCOUNT_ID) on delete cascade</create>
+        <drop>alter table ACCOUNT_OPTION drop constraint FK_ACCOUNT_OPTION_ACCOUNT_ID</drop>
+    </database-object>
+
+    <database-object>
+        <create>alter table CURRENCY_PAIR add constraint FK_CURRENCY_PAIR_FROM_CODE foreign key (FROM_CODE) references MONETARY_UNIT(CURRENCY_CODE) on delete cascade</create>
+        <drop>alter table CURRENCY_PAIR drop constraint FK_CURRENCY_PAIR_FROM_CODE</drop>
+    </database-object>
+
+    <database-object>
+        <create>alter table CURRENCY_PAIR add constraint FK_CURRENCY_PAIR_TO_CODE foreign key (TO_CODE) references MONETARY_UNIT(CURRENCY_CODE) on delete cascade</create>
+        <drop>alter table CURRENCY_PAIR drop constraint FK_CURRENCY_PAIR_TO_CODE</drop>
+    </database-object>
+
+    <database-object>
+        <create>alter table ACCOUNT add constraint FK_ACCOUNT_MONETARY_UNIT_ID foreign key (MONETARY_UNIT_ID) references MONETARY_UNIT</create>
+        <drop>alter table ACCOUNT drop constraint FK_ACCOUNT_MONETARY_UNIT_ID</drop>
+    </database-object>
+
+    <database-object>
+        <create>alter table ACCOUNT_GROUP_LINK add constraint FK_ACCOUNT_ID foreign key (ACCOUNT_ID) references ACCOUNT on delete cascade</create>
+        <drop>alter table ACCOUNT_GROUP_LINK drop constraint FK_ACCOUNT_ID</drop>
+    </database-object>
+
+    <database-object>
+        <create>alter table ACCOUNT_GROUP_LINK add constraint FK_ACCOUNT_GROUP_ID foreign key (ACCOUNT_GROUP_ID) references ACCOUNT_GROUP</create>
+        <drop>alter table ACCOUNT_GROUP_LINK drop constraint FK_ACCOUNT_GROUP_ID</drop>
+    </database-object>
+
+    <database-object>
+        <create>alter table ENTRY add constraint FK_ENTRY_ACCOUNT_ID foreign key (ACCOUNT_ID) references ACCOUNT on delete cascade</create>
+        <drop>alter table ENTRY drop constraint FK_ENTRY_ACCOUNT_ID</drop>
+    </database-object>
+
+    <database-object>
+        <create>alter table SPLIT add constraint FK_SPLIT_ACCOUNT_ID foreign key (ACCOUNT_ID) references ACCOUNT on delete cascade</create>
+        <drop>alter table SPLIT drop constraint FK_SPLIT_ACCOUNT_ID </drop>
+    </database-object>
+
+    <database-object>
+        <create>alter table SPLIT add constraint FK_ENTRY_ID foreign key (ENTRY_ID) references ENTRY on delete cascade</create>
+        <drop>alter table SPLIT drop constraint FK_ENTRY_ID</drop>
+    </database-object>
+
+    <database-object>
+        <create>
+
+            insert into MONETARY_UNIT (MONETARY_UNIT_ID, CURRENCY_CODE, FRACTION_DIGITS, PREFIX)
+                        values(1, 'USD', 2, '$');
+
+            insert into MONETARY_UNIT (MONETARY_UNIT_ID, CURRENCY_CODE, FRACTION_DIGITS, PREFIX)
+                        values(2, 'EUR', 2, '&#8364;');
+
+            insert into MONETARY_UNIT (MONETARY_UNIT_ID, CURRENCY_CODE, FRACTION_DIGITS, PREFIX)
+                        values(3, 'CHF', 2, '');
+
+            insert into MONETARY_UNIT (MONETARY_UNIT_ID, CURRENCY_CODE, FRACTION_DIGITS, PREFIX)
+                        values(4, 'GBP', 2, '£');
+
+            insert into MONETARY_UNIT (MONETARY_UNIT_ID, CURRENCY_CODE, FRACTION_DIGITS, PREFIX)
+                        values(5, 'JPY', 0, '¥');
+
+            insert into CURRENCY_PAIR (CURRENCY_PAIR_ID, FROM_CODE, TO_CODE, EXCHANGE_RATE, CREATED_ON)
+                        values(1, 'CHF', 'EUR', 0.65, '2011-01-05');
+
+            insert into CURRENCY_PAIR (CURRENCY_PAIR_ID, FROM_CODE, TO_CODE, EXCHANGE_RATE, CREATED_ON)
+                        values(2, 'CHF', 'EUR', 0.66, '2011-01-06');
+
+            insert into CURRENCY_PAIR (CURRENCY_PAIR_ID, FROM_CODE, TO_CODE, EXCHANGE_RATE, CREATED_ON)
+                        values(3, 'CHF', 'EUR', 0.67, '2011-01-07');
+
+            insert into CURRENCY_PAIR (CURRENCY_PAIR_ID, FROM_CODE, TO_CODE, EXCHANGE_RATE, CREATED_ON)
+                        values(4, 'CHF', 'USD', 0.98, '2011-01-05');
+
+            insert into CURRENCY_PAIR (CURRENCY_PAIR_ID, FROM_CODE, TO_CODE, EXCHANGE_RATE, CREATED_ON)
+                        values(5, 'EUR', 'CHF', 1.538462, '2011-01-05');
+
+            insert into CURRENCY_PAIR (CURRENCY_PAIR_ID, FROM_CODE, TO_CODE, EXCHANGE_RATE, CREATED_ON)
+                        values(6, 'EUR', 'CHF', 1.515152, '2011-01-06');
+
+            insert into CURRENCY_PAIR (CURRENCY_PAIR_ID, FROM_CODE, TO_CODE, EXCHANGE_RATE, CREATED_ON)
+                        values(7, 'EUR', 'CHF', 1.492537, '2011-01-07');
+
+            insert into CURRENCY_PAIR (CURRENCY_PAIR_ID, FROM_CODE, TO_CODE, EXCHANGE_RATE, CREATED_ON)
+                        values(8, 'EUR', 'USD', 1.400000, '2011-01-06');
+
+            insert into CURRENCY_PAIR (CURRENCY_PAIR_ID, FROM_CODE, TO_CODE, EXCHANGE_RATE, CREATED_ON)
+                        values(9, 'EUR', 'USD', 1.410000, '2011-01-07');
+
+            insert into CURRENCY_PAIR (CURRENCY_PAIR_ID, FROM_CODE, TO_CODE, EXCHANGE_RATE, CREATED_ON)
+                        values(10, 'CHF', 'JPY', 89.026800, '2011-01-05');
+
+
+            insert into ACCOUNT_GROUP (ACCOUNT_GROUP_ID, GROUP_NAME) values (1, 'Bank Accounts');
+            insert into ACCOUNT_GROUP (ACCOUNT_GROUP_ID, GROUP_NAME) values (2, 'Automobile');
+            insert into ACCOUNT_GROUP (ACCOUNT_GROUP_ID, GROUP_NAME) values (3, 'More Bank Accounts');
+
+
+            insert into ACCOUNT (ACCOUNT_ID, ACCOUNT_NAME, ACCOUNT_FLAGS, MONETARY_UNIT_ID, EFFECTIVE_ON, INITIAL_BALANCE)
+                         values (1, 'My USD account', 1, 1, '1970-01-01', 1000);
+            insert into ASSET_ACCOUNT (ACCOUNT_ID)
+                         values (1);
+            insert into BANK_ACCOUNT (ACCOUNT_ID, ACCOUNT_NUMBER, BANK_NAME, BANK_ROUTING)
+                         values (1, '1234567890', 'My Bank Inc.', '111-222-333-444-555');
+            insert into ACCOUNT_GROUP_LINK (ACCOUNT_GROUP_ID, ACCOUNT_ID) values (1, 1);
+
+            insert into ACCOUNT (ACCOUNT_ID, ACCOUNT_NAME, ACCOUNT_FLAGS, MONETARY_UNIT_ID, EFFECTIVE_ON, INITIAL_BALANCE)
+                         values (2, 'My other account', 1, 2, '1970-01-01', 0);
+            insert into ASSET_ACCOUNT (ACCOUNT_ID)
+                         values (2);
+            insert into BANK_ACCOUNT (ACCOUNT_ID, ACCOUNT_NUMBER, BANK_NAME, BANK_ROUTING)
+                         values (2, '4444666777', 'Other Bank GmbH', '777-abc-777');
+            insert into ACCOUNT_GROUP_LINK (ACCOUNT_GROUP_ID, ACCOUNT_ID) values (3, 2);
+
+            insert into ACCOUNT (ACCOUNT_ID, ACCOUNT_NAME, ACCOUNT_FLAGS, MONETARY_UNIT_ID, EFFECTIVE_ON, INITIAL_BALANCE)
+                         values (3, 'Gas', 0, 1, '1970-01-01', 0);
+            insert into EXPENSE_ACCOUNT (ACCOUNT_ID)
+                         values (3);
+            insert into ACCOUNT_GROUP_LINK (ACCOUNT_GROUP_ID, ACCOUNT_ID) values (2, 3);
+
+            insert into ACCOUNT (ACCOUNT_ID, ACCOUNT_NAME, ACCOUNT_FLAGS, MONETARY_UNIT_ID, EFFECTIVE_ON, INITIAL_BALANCE)
+                         values (4, 'Maintenance', 0, 1, '1970-01-01', 0);
+            insert into EXPENSE_ACCOUNT (ACCOUNT_ID)
+                         values (4);
+            insert into ACCOUNT_GROUP_LINK (ACCOUNT_GROUP_ID, ACCOUNT_ID) values (2, 4);
+
+            insert into ACCOUNT (ACCOUNT_ID, ACCOUNT_NAME, ACCOUNT_FLAGS, MONETARY_UNIT_ID, EFFECTIVE_ON, INITIAL_BALANCE)
+                         values (5, 'Entertainment', 0, 2, '1970-01-01', 123);
+            insert into EXPENSE_ACCOUNT (ACCOUNT_ID)
+                         values (5);
+
+            insert into ACCOUNT (ACCOUNT_ID, ACCOUNT_NAME, ACCOUNT_FLAGS, MONETARY_UNIT_ID, EFFECTIVE_ON, INITIAL_BALANCE)
+                         values (6, 'Salary', 0, 1, '1970-01-01', 0);
+            insert into INCOME_ACCOUNT (ACCOUNT_ID)
+                         values (6);
+
+            insert into ACCOUNT (ACCOUNT_ID, ACCOUNT_NAME, ACCOUNT_FLAGS, MONETARY_UNIT_ID, EFFECTIVE_ON, INITIAL_BALANCE)
+                         values (7, 'Mortgage', 0, 1, '1970-01-01', -30000);
+            insert into LIABILITY_ACCOUNT (ACCOUNT_ID)
+                         values (7);
+
+            insert into ACCOUNT (ACCOUNT_ID, ACCOUNT_NAME, ACCOUNT_FLAGS, MONETARY_UNIT_ID, EFFECTIVE_ON, INITIAL_BALANCE)
+                         values (8, 'My House', 0, 1, '1970-01-01', 50000);
+            insert into ASSET_ACCOUNT (ACCOUNT_ID)
+                         values (8);
+
+            insert into ACCOUNT (ACCOUNT_ID, ACCOUNT_NAME, ACCOUNT_FLAGS, MONETARY_UNIT_ID, EFFECTIVE_ON, INITIAL_BALANCE)
+                         values (9, 'Mortgage Interest', 0, 1, '1970-01-01', 0);
+            insert into EXPENSE_ACCOUNT (ACCOUNT_ID)
+                         values (9);
+
+            insert into ACCOUNT (ACCOUNT_ID, ACCOUNT_NAME, ACCOUNT_FLAGS, MONETARY_UNIT_ID, EFFECTIVE_ON, INITIAL_BALANCE)
+                         values (10, 'My CHF account', 0, 3, '1970-01-01', 5000);
+            insert into ASSET_ACCOUNT (ACCOUNT_ID)
+                         values (10);
+            insert into BANK_ACCOUNT (ACCOUNT_ID, ACCOUNT_NUMBER, BANK_NAME, BANK_ROUTING)
+                         values (10, '1234567890', 'My Swiss Bank Inc.', '1234567890');
+            insert into ACCOUNT_GROUP_LINK (ACCOUNT_GROUP_ID, ACCOUNT_ID) values (1, 10);
+
+            insert into ACCOUNT (ACCOUNT_ID, ACCOUNT_NAME, ACCOUNT_FLAGS, MONETARY_UNIT_ID, EFFECTIVE_ON, INITIAL_BALANCE)
+                         values (11, 'Groceries', 0, 5, '1970-01-01', 0);
+            insert into EXPENSE_ACCOUNT (ACCOUNT_ID)
+                         values (11);
+
+            insert into ACCOUNT (ACCOUNT_ID, ACCOUNT_NAME, ACCOUNT_FLAGS, MONETARY_UNIT_ID, EFFECTIVE_ON, INITIAL_BALANCE)
+                         values (12, 'Cash in Wallet', 0, 1, '1970-01-01', 0);
+            insert into ASSET_ACCOUNT (ACCOUNT_ID)
+                         values (12);
+
+            insert into ACCOUNT (ACCOUNT_ID, ACCOUNT_NAME, ACCOUNT_FLAGS, MONETARY_UNIT_ID, EFFECTIVE_ON, INITIAL_BALANCE)
+                         values (13, 'Phone/Internet', 0, 1, '1970-01-01', 0);
+            insert into EXPENSE_ACCOUNT(ACCOUNT_ID)
+                         values (13);
+
+
+            insert into ENTRY (ENTRY_ID, OBJ_VERSION, ACCOUNT_ID, DESCRIPTION, EFFECTIVE_ON, ENTERED_ON)
+                         values (1, 0, 1, 'Filling up the car', '2010-12-21', '2010-12-21 12:30:00');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (1, 0, 3, 1, 'Filling up the car', -50, 50, '2010-12-21 12:30:00');
+
+            insert into ENTRY (ENTRY_ID, OBJ_VERSION, ACCOUNT_ID, DESCRIPTION, EFFECTIVE_ON, ENTERED_ON)
+                         values (2, 0, 1, 'Changing the tires', '2010-12-22', '2010-12-22 09:10:00');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (2, 0, 4, 2, 'Changing the tires', -20, 20, '2010-12-22 09:10:00');
+
+            insert into ENTRY (ENTRY_ID, OBJ_VERSION, ACCOUNT_ID, DESCRIPTION, EFFECTIVE_ON, ENTERED_ON)
+                         values (3, 0, 1, 'Transfering money to EUR account', '2010-12-22', '2010-12-22 09:15:00');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (3, 0, 2, 3, 'Transfering money to EUR account', -500, 375, '2010-12-22 09:15:00');
+
+            insert into ENTRY (ENTRY_ID, OBJ_VERSION, ACCOUNT_ID, DESCRIPTION, EFFECTIVE_ON, ENTERED_ON)
+                         values (4, 0, 1, 'Salary paid by employer', '2010-12-25', '2010-12-25 17:50:00');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (4, 0, 6, 4, 'Salary paid by employer', 700, -700, '2010-12-25 17:50:00');
+
+            insert into ENTRY (ENTRY_ID, OBJ_VERSION, ACCOUNT_ID, DESCRIPTION, EFFECTIVE_ON, ENTERED_ON)
+                         values (5, 0, 1, 'Mastercard Bill', '2010-12-26', '2010-12-26 14:32:00');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (5, 0, 3, 5, 'Stop at the gas station', -70, 70, '2010-12-26 14:25:00');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (6, 0, 4, 5, 'Fixed the bumper', -50, 50, '2010-12-26 14:26:00');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (7, 0, 3, 5, 'Refund from the gas station', 20, -20, '2010-12-26 14:27:00');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (8, 0, 5, 5, 'Watched a movie', -30, 22.50, '2010-12-26 14:28:00');
+
+            insert into ENTRY (ENTRY_ID, OBJ_VERSION, ACCOUNT_ID, DESCRIPTION, EFFECTIVE_ON, ENTERED_ON)
+                         values (6, 0, 2, 'Paid gas in euros', '2010-12-27', '2010-12-27 06:32:00');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (9, 0, 3, 6, 'Paid gas in euros', -37.50, 50, '2010-12-27 06:32:00');
+
+            insert into ENTRY (ENTRY_ID, OBJ_VERSION, ACCOUNT_ID, DESCRIPTION, EFFECTIVE_ON, ENTERED_ON)
+                         values (7, 0, 2, 'Converted to USD', '2010-12-28', '2010-12-27 05:52:00');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (10, 0, 1, 7, 'Converted to USD', -37.50, 50, '2010-12-28 05:52:00');
+
+            insert into ENTRY (ENTRY_ID, OBJ_VERSION, ACCOUNT_ID, DESCRIPTION, EFFECTIVE_ON, ENTERED_ON)
+                         values (8, 0, 1, 'Amortization', '2011-01-03', '2011-01-05 12:21:00');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (11, 0, 7, 8, 'Amortization', -500, 500, '2011-01-05 12:21:00');
+
+            insert into ENTRY (ENTRY_ID, OBJ_VERSION, ACCOUNT_ID, DESCRIPTION, EFFECTIVE_ON, ENTERED_ON)
+                         values (9, 0, 10, 'Bought stuff in Japan', '2011-01-05', '2011-01-06 06:33:00');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (12, 0, 11, 9, 'Bought stuff in Japan', -200, 17805, '2011-01-06 06:33:00');
+
+            insert into ENTRY (ENTRY_ID, OBJ_VERSION, ACCOUNT_ID, DESCRIPTION, EFFECTIVE_ON, ENTERED_ON)
+                         values (10, 0, 1, 'Paid mortgage interest', '2011-02-15', '2011-02-15 13:43:11');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (13, 0, 9, 10, 'Paid mortgage interest', -150, 150, '2011-02-15 13:43:11');
+
+            insert into ENTRY (ENTRY_ID, OBJ_VERSION, ACCOUNT_ID, DESCRIPTION, EFFECTIVE_ON, ENTERED_ON)
+                         values (11, 0, 1, 'Salary paid by employer', '2011-01-25', '2011-01-25 14:50:00');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (14, 0, 6, 11, 'Salary paid by employer', 700, -700, '2010-12-25 14:50:00');
+
+            insert into ENTRY (ENTRY_ID, OBJ_VERSION, ACCOUNT_ID, DESCRIPTION, EFFECTIVE_ON, ENTERED_ON)
+                         values (12, 0, 1, 'Withdrawal at ATM', '2011-01-26', '2011-01-26 11:23:00');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (15, 0, 12, 12, 'Withdrawal at ATM', -100, 100, '2010-12-26 11:23:00');
+
+            insert into ENTRY (ENTRY_ID, OBJ_VERSION, ACCOUNT_ID, DESCRIPTION, EFFECTIVE_ON, ENTERED_ON)
+                         values (13, 0, 12, 'Charged phone minutes', '2011-01-26', '2011-01-26 12:04:00');
+            insert into SPLIT (SPLIT_ID, OBJ_VERSION, ACCOUNT_ID, ENTRY_ID, DESCRIPTION, ENTRY_AMOUNT, AMOUNT, ENTERED_ON)
+                         values (16, 0, 13, 13, 'Charged phone minutes', -22, 22, '2010-12-26 12:04:00');
+
+
+            insert into USERS(USER_ID)
+                        values(1);
+
+            insert into GLOBAL_OPTION(NAME, USER_ID, VALUE)
+                        values('DATE_FORMAT', 1, 'yyyy.MM.dd');
+
+            insert into GLOBAL_OPTION(NAME, USER_ID, VALUE)
+                        values('NEW_ENTRY_SELECT_DAY', 1, 'true');
+
+            insert into GLOBAL_OPTION(NAME, USER_ID, VALUE)
+                        values('ROUND_FRACTIONS_IN_REPORTS', 1, 'true');
+
+            insert into ACCOUNT_OPTION (NAME, USER_ID, ACCOUNT_ID, VALUE)
+                        values('ENTRIES_DATE_RANGE', 1, 2, '1262300400000-1293750000000');
+
+
+        </create>
+        <drop/>
+    </database-object>
+
+</hibernate-mapping>
+
+

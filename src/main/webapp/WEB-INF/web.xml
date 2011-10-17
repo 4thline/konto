@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
+
+    <servlet>
+        <servlet-name>settingsService</servlet-name>
+        <servlet-class>org.fourthline.konto.server.service.SettingsServiceImpl</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>settingsService</servlet-name>
+        <url-pattern>/Konto/settings</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ledgerService</servlet-name>
+        <servlet-class>org.fourthline.konto.server.service.LedgerServiceImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ledgerService</servlet-name>
+        <url-pattern>/Konto/ledger</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>currencyService</servlet-name>
+        <servlet-class>org.fourthline.konto.server.service.CurrencyServiceImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>currencyService</servlet-name>
+        <url-pattern>/Konto/currency</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>reportService</servlet-name>
+        <servlet-class>org.fourthline.konto.server.service.ReportServiceImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>reportService</servlet-name>
+        <url-pattern>/Konto/report</url-pattern>
+    </servlet-mapping>
+
+</web-app>

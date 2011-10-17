@@ -1,0 +1,51 @@
+.leftColumn {
+    width: 12em;
+}
+
+.rightColumn {
+
+}
+
+.groupNameBox {
+    width: 22.5em;
+}
+
+.groupShowAllButton {
+    width: 7em;
+}
+
+.typeListBox {
+    width: 10em;
+}
+
+.nameTextBox {
+    width: 30em;
+}
+
+.effectiveOnDateBox {
+    width: 7em;
+}
+
+.currencyListBox {
+    width: 5em;
+}
+
+.initialBalanceTextBox {
+    width: 10em;
+}
+
+.initialBalanceCurrencyLabel {
+    margin-left: 0.25em;
+}
+
+.saveButton {
+    width: 10em;
+}
+
+.deleteButton {
+    width: 10em;
+}
+
+.cancelButton {
+    width: 10em;
+}

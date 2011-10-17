@@ -1,0 +1,91 @@
+<!--
+  ~ Copyright (C) 2011 4th Line GmbH, Switzerland
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:with field="bundle" type="org.fourthline.konto.client.bundle.Bundle"/>
+    <ui:with field="themeStyle" type="org.seamless.gwt.theme.shared.client.ThemeStyle"/>
+
+    <ui:style src="ReportLinesTable.css"
+              type="org.fourthline.konto.client.report.view.ReportResultView.Style">
+
+        .reportPanel {
+            margin: 0 auto;
+            width: 98%;
+        }
+
+        .titlePanel {
+            margin: 0.5em 0;
+        }
+
+        .titleLabel {
+            font-size: x-large;
+        }
+
+        .titleLabelSub {
+            font-size: smaller;
+        }
+
+        .blockPanel {
+            width: 100%;
+            margin: 1em 0;
+        }
+
+        .blockTitlePanel {
+            width: 100%;
+            background: #e7e9eb;
+            font-weight: bold;
+            padding: 0.25em;
+            border-top: 1px solid #bbbbbb;
+        }
+
+        .blockLabel {
+            font-size: larger;
+        }
+
+        .blockSumLabel {
+            font-size: larger;
+            text-align: right;
+        }
+
+        .totalPanel {
+            width: 100%;
+            background: #e7e9eb;
+            padding: 0.25em 0;
+            margin-bottom: 1em;
+            border-top: 1px solid #a1a6ab;
+        }
+
+        .totalSumLabel {
+            font-weight: bold;
+            font-size: larger;
+            text-align: right;
+        }
+
+        .linesTable {
+            width: 100%;
+        }
+
+
+    </ui:style>
+
+    <g:ScrollPanel>
+        <g:VerticalPanel ui:field="reportPanel" addStyleNames="{style.reportPanel}"/>
+    </g:ScrollPanel>
+
+</ui:UiBinder>

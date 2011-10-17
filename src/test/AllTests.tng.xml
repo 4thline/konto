@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Konto - All Tests" parallel="false" thread-count="1" verbose="1">
+
+    <test name="All">
+        <packages>
+            <package name="org.fourthline.konto.test.currency"/>
+            <package name="org.fourthline.konto.test.ledger"/>
+            <package name="org.fourthline.konto.test.report"/>
+            <package name="org.fourthline.konto.test.settings"/>
+        </packages>
+    </test>
+
+</suite>

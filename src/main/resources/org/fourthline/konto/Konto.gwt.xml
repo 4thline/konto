@@ -1,0 +1,43 @@
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.0//EN"
+        "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd">
+
+<module rename-to="Konto">
+
+    <!-- ##################################################################### -->
+
+    <inherits name="com.google.gwt.user.User"/>
+    <inherits name="com.google.gwt.resources.Resources"/>
+    <inherits name="com.google.gwt.logging.Logging"/>
+    <inherits name="com.google.gwt.activity.Activity"/>
+    <inherits name="com.google.gwt.place.Place"/>
+    <inherits name="com.google.gwt.inject.Inject"/>
+
+    <inherits name="org.seamless.gwt.All"/>
+    <inherits name="org.seamless.gwt.theme.fourthline.Theme"/>
+
+    <!-- ##################################################################### -->
+
+    <set-property name="gwt.logging.enabled" value="TRUE"/>
+    <set-property name="gwt.logging.logLevel" value="FINEST"/>
+
+    <set-property name="gwt.logging.popupHandler" value="DISABLED"/>
+    <set-property name="gwt.logging.firebugHandler" value="ENABLED"/>
+    <set-property name="gwt.logging.consoleHandler" value="DISABLED"/>
+
+    <!-- This will give us shorter obfuscated CSS class names. We guarantee
+         that there will be no class names that will conflict with /KONTO.+/ -->
+    <set-configuration-property name="CssResource.obfuscationPrefix" value="KONTO"/>
+
+    <!-- GWT 2.3.0 release notes, will be the future default -->
+    <set-configuration-property name="UiBinder.useSafeHtmlTemplates" value="true"/>
+
+    <!-- ##################################################################### -->
+
+    <source path="client"/>
+    <source path="shared"/>
+
+    <!-- ##################################################################### -->
+
+    <entry-point class="org.fourthline.konto.client.KontoEntryPoint"/>
+
+</module>

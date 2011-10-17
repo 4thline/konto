@@ -1,0 +1,119 @@
+<!--
+  ~ Copyright (C) 2011 4th Line GmbH, Switzerland
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:with field="bundle" type="org.fourthline.konto.client.bundle.Bundle"/>
+    <ui:with field="themeStyle" type="org.seamless.gwt.theme.shared.client.ThemeStyle"/>
+
+    <ui:style type="org.fourthline.konto.client.settings.view.SettingsViewImpl.Style">
+        .leftColumn {
+            width: 22em;
+        }
+
+        .rightColumn {
+
+        }
+
+        .dateFormatListBox {
+            width: 10em;
+        }
+
+        .saveButton {
+
+        }
+
+        .cancelButton {
+
+        }
+    </ui:style>
+
+    <g:DockLayoutPanel unit="EM">
+        <g:north size="3">
+            <g:VerticalPanel addStyleNames="{themeStyle.ContentHeaderContainer}">
+                <g:HTML addStyleNames="{themeStyle.ContentHeaderLabel}">
+                    Settings
+                </g:HTML>
+            </g:VerticalPanel>
+        </g:north>
+        <g:center>
+
+            <g:SimplePanel addStyleNames="{themeStyle.FormContainer}" width="100%">
+
+                <g:VerticalPanel addStyleNames="{themeStyle.Form}">
+
+                    <g:HTMLPanel>
+                        <table cellpadding="0" cellspacing="0" border="0">
+
+                            <colgroup>
+                                <col class="{style.leftColumn}"/>
+                                <col class="{style.rightColumn}"/>
+                            </colgroup>
+
+                            <tr>
+                                <td align="right" class="{themeStyle.FormCell}">
+                                    <g:Label addStyleNames="{themeStyle.FormLabel}">Date display format:</g:Label>
+                                </td>
+                                <td class="{themeStyle.FormCell}">
+                                    <g:ListBox ui:field="dateFormatListBox"
+                                               addStyleNames="{themeStyle.FormField} {style.dateFormatListBox}"
+                                               multipleSelect="false"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td align="right" class="{themeStyle.FormCell}">
+                                    <g:Label addStyleNames="{themeStyle.FormLabel}">Select day when creating new entries:</g:Label>
+                                </td>
+                                <td class="{themeStyle.FormCell}">
+                                    <g:CheckBox ui:field="newEntrySelectDayCheckBox"
+                                               addStyleNames="{themeStyle.FormFieldNoBorder}"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td align="right" class="{themeStyle.FormCell}">
+                                    <g:Label addStyleNames="{themeStyle.FormLabel}">Round up fractions of amounts in reports:</g:Label>
+                                </td>
+                                <td class="{themeStyle.FormCell}">
+                                    <g:CheckBox ui:field="roundFractionsInReportsCheckBox"
+                                               addStyleNames="{themeStyle.FormFieldNoBorder}"/>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </g:HTMLPanel>
+
+                    <g:HorizontalPanel width="100%">
+                        <g:cell horizontalAlignment="left">
+                            <g:SimplePanel addStyleNames="{themeStyle.FormCell}">
+                                <g:Button ui:field="saveButton"
+                                          addStyleNames="{themeStyle.FormButton} {style.saveButton}">
+                                    Save Settings
+                                </g:Button>
+                            </g:SimplePanel>
+                        </g:cell>
+                    </g:HorizontalPanel>
+
+                </g:VerticalPanel>
+            </g:SimplePanel>
+
+        </g:center>
+    </g:DockLayoutPanel>
+
+</ui:UiBinder>

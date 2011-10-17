@@ -1,0 +1,190 @@
+<!--
+  ~ Copyright (C) 2011 4th Line GmbH, Switzerland
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:w="urn:import:org.seamless.gwt.component.client.widget">
+
+    <ui:with field="bundle" type="org.fourthline.konto.client.bundle.Bundle"/>
+    <ui:with field="themeStyle" type="org.seamless.gwt.theme.shared.client.ThemeStyle"/>
+
+    <ui:style src="AccountViewStyle.css" type="org.fourthline.konto.client.ledger.account.view.AccountViewStyle"/>
+
+    <g:DockLayoutPanel unit="EM">
+        <g:north size="2.5">
+            <g:VerticalPanel addStyleNames="{themeStyle.ContentHeaderContainer}">
+                <g:Label addStyleNames="{themeStyle.ContentHeaderLabel}">Edit Account</g:Label>
+            </g:VerticalPanel>
+        </g:north>
+        <g:center>
+            <g:SimplePanel addStyleNames="{themeStyle.FormContainer}" width="100%">
+
+                <g:VerticalPanel addStyleNames="{themeStyle.Form}">
+                    <g:VerticalPanel ui:field="form">
+
+                        <g:HTMLPanel>
+                            <table cellpadding="0" cellspacing="0" border="0">
+
+                                <colgroup>
+                                    <col class="{style.leftColumn}"/>
+                                    <col class="{style.rightColumn}"/>
+                                </colgroup>
+
+                                <tr ui:field="typeRow" class="{themeStyle.FormRowInvisible}">
+                                    <td align="right" class="{themeStyle.FormCell}">
+                                        <g:Label addStyleNames="{themeStyle.FormLabel}">
+                                            Type:
+                                        </g:Label>
+                                    </td>
+                                    <td class="{themeStyle.FormCell}">
+                                        <g:ListBox ui:field="typeListBox"
+                                                   addStyleNames="{themeStyle.FormField} {style.typeListBox}"
+                                                   multipleSelect="false"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td/>
+                                    <td>
+                                        <g:VerticalPanel ui:field="nameErrors"
+                                                         addStyleNames="{themeStyle.FormErrorMessages}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right" class="{themeStyle.FormCell}">
+                                        <g:Label addStyleNames="{themeStyle.FormLabel}">Name:</g:Label>
+                                    </td>
+                                    <td class="{themeStyle.FormCell}">
+                                        <g:TextBox ui:field="nameTextBox"
+                                                   addStyleNames="{themeStyle.FormField} {style.nameTextBox}"
+                                                   maxLength="100"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td/>
+                                    <td>
+                                        <g:VerticalPanel ui:field="groupErrors"
+                                                         addStyleNames="{themeStyle.FormErrorMessages}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right" class="{themeStyle.FormCell}">
+                                        <g:Label addStyleNames="{themeStyle.FormLabel}">Group:</g:Label>
+                                    </td>
+                                    <td class="{themeStyle.FormCell}">
+                                        <g:SimplePanel ui:field="accountGroupSelectPanel"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td/>
+                                    <td>
+                                        <g:VerticalPanel ui:field="effectiveOnErrors"
+                                                         addStyleNames="{themeStyle.FormErrorMessages}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right" class="{themeStyle.FormCell}">
+                                        <g:Label addStyleNames="{themeStyle.FormLabel}">
+                                            Starting Date:
+                                        </g:Label>
+                                    </td>
+                                    <td class="{themeStyle.FormCell}">
+                                        <w:AutocompleteDateTextBox ui:field="effectiveOnDateBox"
+                                                                   addStyleNames="{style.effectiveOnDateBox} {themeStyle.FormField}"/>
+                                    </td>
+                                </tr>
+
+                                <tr ui:field="currencyRow" class="{themeStyle.FormRowInvisible}">
+                                    <td align="right" class="{themeStyle.FormCell}">
+                                        <g:Label addStyleNames="{themeStyle.FormLabel}">
+                                            Currency:
+                                        </g:Label>
+                                    </td>
+                                    <td class="{themeStyle.FormCell}">
+                                        <g:ListBox ui:field="currencyListBox"
+                                                   addStyleNames="{themeStyle.FormField} {style.currencyListBox}"
+                                                   multipleSelect="false"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td/>
+                                    <td>
+                                        <g:VerticalPanel ui:field="initialBalanceErrors"
+                                                         addStyleNames="{themeStyle.FormErrorMessages}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="right" class="{themeStyle.FormCell}">
+                                        <g:Label addStyleNames="{themeStyle.FormLabel}">
+                                            Initial Balance:
+                                        </g:Label>
+                                    </td>
+                                    <td class="{themeStyle.FormCell}">
+                                        <g:HorizontalPanel>
+                                            <g:TextBox ui:field="initialBalanceTextBox"
+                                                       addStyleNames="{themeStyle.FormField} {style.initialBalanceTextBox}"
+                                                       maxLength="15"/>
+                                            <g:cell verticalAlignment="middle">
+                                                <g:Label ui:field="initialBalanceCurrencyLabel"
+                                                         addStyleNames="{style.initialBalanceCurrencyLabel}"/>
+                                            </g:cell>
+                                        </g:HorizontalPanel>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </g:HTMLPanel>
+
+                    </g:VerticalPanel>
+
+                    <g:HorizontalPanel width="100%">
+                        <g:cell horizontalAlignment="left">
+                            <g:SimplePanel addStyleNames="{themeStyle.FormCell}">
+                                <g:Button ui:field="saveButton"
+                                          addStyleNames="{themeStyle.FormButton} {style.saveButton}">
+                                    Save Account
+                                </g:Button>
+                            </g:SimplePanel>
+                        </g:cell>
+                        <g:cell horizontalAlignment="center">
+                            <g:SimplePanel addStyleNames="{themeStyle.FormCell}">
+                                <g:Button ui:field="deleteButton"
+                                          addStyleNames="{themeStyle.FormButton} {style.deleteButton}"
+                                          visible="false">
+                                    Delete Account
+                                </g:Button>
+                            </g:SimplePanel>
+                        </g:cell>
+                        <g:cell horizontalAlignment="right">
+                            <g:SimplePanel addStyleNames="{themeStyle.FormCell}">
+                                <g:Button ui:field="cancelButton"
+                                          addStyleNames="{themeStyle.FormButton} {style.cancelButton}">
+                                    Cancel
+                                </g:Button>
+                            </g:SimplePanel>
+                        </g:cell>
+                    </g:HorizontalPanel>
+
+                </g:VerticalPanel>
+            </g:SimplePanel>
+        </g:center>
+    </g:DockLayoutPanel>
+
+</ui:UiBinder>

@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <sql-query name="sumOfAccounts">
+        <return-scalar column="ACCT_ID" type="long"/>
+        <return-scalar column="SUM_AMT" type="big_decimal"/>
+        select
+            ACCT as ACCT_ID,
+            sum(AMT) as SUM_AMT
+        from
+            (select
+                s.ACCOUNT_ID as ACCT,
+                sum(s.AMOUNT) as AMT
+             from
+                SPLIT s inner join ENTRY e on s.ENTRY_ID = e.ENTRY_ID
+             where
+                s.ACCOUNT_ID in (:ids)
+                    and e.EFFECTIVE_ON >= :rangeStart and e.EFFECTIVE_ON &lt;= :rangeEnd
+             group by
+                s.ACCOUNT_ID
+             union
+             select
+                e.ACCOUNT_ID as ACCT,
+                sum(s.ENTRY_AMOUNT) as AMT
+             from
+                SPLIT s inner join ENTRY e on s.ENTRY_ID = e.ENTRY_ID
+             where
+                e.ACCOUNT_ID in (:ids)
+                    and e.EFFECTIVE_ON >= :rangeStart and e.EFFECTIVE_ON &lt;= :rangeEnd
+             group by
+                e.ACCOUNT_ID)
+        group by
+            ACCT
+        order by
+            ACCT asc;
+    </sql-query>
+
+    <!-- TODO: Unused but basically ready for time-series graphs -->
+    <sql-query name="sumOfAccountsByMonth">
+        <return-scalar column="ACCT_ID" type="long"/>
+        <return-scalar column="YEAR" type="integer"/>
+        <return-scalar column="MONTH" type="integer"/>
+        <return-scalar column="SUM_AMT" type="big_decimal"/>
+        select
+            ACCT as ACCT_ID,
+            Y as YEAR,
+            M as MONTH,
+            sum(AMT) as SUM_AMT
+        from
+            (select
+                s.ACCOUNT_ID as ACCT,
+                extract(year from e.EFFECTIVE_ON) as Y,
+                extract(month from e.EFFECTIVE_ON) as M,
+                sum(s.AMOUNT) as AMT
+             from
+                SPLIT s inner join ENTRY e on s.ENTRY_ID = e.ENTRY_ID
+             where
+                s.ACCOUNT_ID in (:ids)
+                    and e.EFFECTIVE_ON >= :rangeStart and e.EFFECTIVE_ON &lt;= :rangeEnd
+             group by
+                s.ACCOUNT_ID, Y, M
+             union
+             select
+                e.ACCOUNT_ID as ACCT,
+                extract(year from e.EFFECTIVE_ON) as Y,
+                extract(month from e.EFFECTIVE_ON) as M,
+                sum(s.ENTRY_AMOUNT) as AMT
+             from
+                SPLIT s inner join ENTRY e on s.ENTRY_ID = e.ENTRY_ID
+             where
+                e.ACCOUNT_ID in (:ids)
+                    and e.EFFECTIVE_ON >= :rangeStart and e.EFFECTIVE_ON &lt;= :rangeEnd
+             group by
+                e.ACCOUNT_ID, Y, M)
+        group by
+            ACCT, Y, M
+        order by
+            ACCT, Y, M asc;
+    </sql-query>
+
+    <sql-query name="cashflowOfAccounts">
+        <return-scalar column="ACCOUNT_ID" type="long"/>
+        <return-scalar column="ENTRY_ID" type="long"/>
+        <return-scalar column="SPLIT_ID" type="long"/>
+        <return-scalar column="EFFECTIVE_ON" type="date"/>
+        <return-scalar column="DESCRIPTION" type="string"/>
+        <return-scalar column="FROMTO_ACCOUNT_ID" type="long"/>
+        <return-scalar column="FROMTO_ACCOUNT_GROUP" type="string"/>
+        <return-scalar column="FROMTO_ACCOUNT" type="string"/>
+        <return-scalar column="AMOUNT" type="big_decimal"/>
+        select
+            ACCOUNT_ID,
+            ENTRY_ID,
+            SPLIT_ID,
+            EFFECTIVE_ON,
+            DESCRIPTION,
+            FROMTO_ACCOUNT_ID,
+            FROMTO_ACCOUNT_GROUP,
+            FROMTO_ACCOUNT,
+            AMOUNT
+        from
+            (
+             select
+                s.ACCOUNT_ID as ACCOUNT_ID,
+                e.ENTRY_ID as ENTRY_ID,
+                s.SPLIT_ID as SPLIT_ID,
+                e.EFFECTIVE_ON as EFFECTIVE_ON,
+                s.DESCRIPTION as DESCRIPTION,
+                a.ACCOUNT_ID as FROMTO_ACCOUNT_ID,
+                ag.GROUP_NAME as FROMTO_ACCOUNT_GROUP,
+                a.ACCOUNT_NAME as FROMTO_ACCOUNT,
+                s.AMOUNT
+             from
+                SPLIT s inner join ENTRY e on s.ENTRY_ID = e.ENTRY_ID
+                  inner join ACCOUNT a on e.ACCOUNT_ID = a.ACCOUNT_ID
+                    left outer join ACCOUNT_GROUP_LINK agl on agl.ACCOUNT_ID = a.ACCOUNT_ID
+                      left outer join ACCOUNT_GROUP ag on agl.ACCOUNT_GROUP_ID = ag.ACCOUNT_GROUP_ID
+             where
+                s.ACCOUNT_ID in (:ids)
+                    and e.EFFECTIVE_ON >= :rangeStart and e.EFFECTIVE_ON &lt;= :rangeEnd
+             union
+             select
+                e.ACCOUNT_ID as ACCOUNT_ID,
+                e.ENTRY_ID as ENTRY_ID,
+                s.SPLIT_ID as SPLIT_ID,
+                e.EFFECTIVE_ON as EFFECTIVE_ON,
+                case when s.DESCRIPTION = e.DESCRIPTION
+                  then s.DESCRIPTION
+                  else concat(e.DESCRIPTION, concat(': ', s.DESCRIPTION))
+                end as DESCRIPTION,
+                a.ACCOUNT_ID as FROMTO_ACCOUNT_ID,
+                ag.GROUP_NAME as FROMTO_ACCOUNT_GROUP,
+                a.ACCOUNT_NAME as FROMTO_ACCOUNT,
+                s.ENTRY_AMOUNT
+             from
+                SPLIT s inner join ENTRY e on s.ENTRY_ID = e.ENTRY_ID
+                  inner join ACCOUNT a on s.ACCOUNT_ID = a.ACCOUNT_ID
+                    left outer join ACCOUNT_GROUP_LINK agl on agl.ACCOUNT_ID = a.ACCOUNT_ID
+                      left outer join ACCOUNT_GROUP ag on agl.ACCOUNT_GROUP_ID = ag.ACCOUNT_GROUP_ID
+             where
+                e.ACCOUNT_ID in (:ids)
+                    and e.EFFECTIVE_ON >= :rangeStart and e.EFFECTIVE_ON &lt;= :rangeEnd
+             )
+        order by
+            ACCOUNT_ID asc, EFFECTIVE_ON asc
+    </sql-query>
+</hibernate-mapping>
