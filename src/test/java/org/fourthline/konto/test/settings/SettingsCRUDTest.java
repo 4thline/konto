@@ -69,8 +69,12 @@ public class SettingsCRUDTest extends HibernateTest {
                 settings.getOption(AccountOption.OPT_ENTRIES_DATE_RANGE);
 
         assertEquals(
-                entriesDateRangeSetting.getValue(),
-                DateRange.Preset.LAST_YEAR.getDateRange()
+                entriesDateRangeSetting.getValue().getStart().getTime(),
+                1262300400000l
+        );
+        assertEquals(
+                entriesDateRangeSetting.getValue().getEnd().getTime(),
+                1293750000000l
         );
 
         entriesDateRangeSetting.setValue(DateRange.Preset.YEAR_TO_DATE.getDateRange());
