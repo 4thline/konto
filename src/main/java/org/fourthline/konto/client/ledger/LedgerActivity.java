@@ -150,9 +150,6 @@ public class LedgerActivity extends AbstractActivity implements
         }
         entryPresenter = entryPresenterProvider.get();
 
-        final Date lastEntryDate =
-                lines == null || lines.size() == 0 ? new Date() : lines.get(0).getDate();
-
         // If this was a filtered ledger view, we might not have loaded all the
         // splits of an entry, so load them now if necessary
         if (ledgerEntry != null && ledgerEntry instanceof Entry
@@ -165,11 +162,11 @@ public class LedgerActivity extends AbstractActivity implements
 
                 @Override
                 public void onSuccess(Entry result) {
-                    entryPresenter.startWith(lines.getAccount(), result, lastEntryDate);
+                    entryPresenter.startWith(lines.getAccount(), result, getLastEntryDate());
                 }
             });
         } else {
-            entryPresenter.startWith(lines.getAccount(), ledgerEntry, lastEntryDate);
+            entryPresenter.startWith(lines.getAccount(), ledgerEntry, getLastEntryDate());
         }
     }
 
@@ -238,6 +235,18 @@ public class LedgerActivity extends AbstractActivity implements
     protected void hideEntryEditContainer() {
         view.hideEntryEditContainer();
         view.getEntryEditContainer().setWidget(null);
+    }
+
+    protected Date getLastEntryDate() {
+        // Find the last entry line with a date not in the future
+        if (lines == null || lines.size() == 0)
+            return new Date();
+        long currentTime = new Date().getTime();
+        for (LedgerLine line : lines) {
+            if (line.getDate().getTime()  < currentTime)
+                return line.getDate();
+        }
+        return lines.get(0).getDate();
     }
 
     protected void loadLedgerLines(final boolean init) {
