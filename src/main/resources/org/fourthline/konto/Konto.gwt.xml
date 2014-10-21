@@ -31,6 +31,13 @@
     <!-- GWT 2.3.0 release notes, will be the future default -->
     <set-configuration-property name="UiBinder.useSafeHtmlTemplates" value="true"/>
 
+    <!-- Super dev mode -->
+    <add-linker name="xsiframe"/>
+    <!--
+    TODO Disable before commit
+    <set-property name="user.agent" value="gecko1_8"/>
+    -->
+
     <!-- ##################################################################### -->
 
     <source path="client"/>

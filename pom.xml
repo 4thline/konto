@@ -60,8 +60,8 @@
         <seamless.version>1.0-SNAPSHOT</seamless.version>
         <testng.version>5.14.9</testng.version>
         <javax.inject.version>1</javax.inject.version>
-        <gwt.maven.plugin.version>2.4.0</gwt.maven.plugin.version>
-        <gwt.version>2.4.0</gwt.version>
+        <gwt.maven.plugin.version>2.6.1</gwt.maven.plugin.version>
+        <gwt.version>2.6.1</gwt.version>
         <gin.version>1.5.0</gin.version>
         <hibernate.core.version>3.6.0.Final</hibernate.core.version>
         <hibernate.validator.version>4.1.0.Final</hibernate.validator.version>
@@ -210,6 +210,14 @@
         </pluginManagement>
 
         <plugins>
+
+            <!-- Waaargh -->
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <webappDirectory>${build.directory}/${project.artifactId}.war</webappDirectory>
+                </configuration>
+            </plugin>
 
             <!-- Compile GWT client for packaging -->
             <plugin>
