@@ -8,7 +8,7 @@
 
     <groupId>org.fourthline.konto</groupId>
     <artifactId>konto</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>war</packaging>
 
     <!-- ##################################################################################################### -->
@@ -57,7 +57,7 @@
 
         <test-jul-config-file>${basedir}/src/test/logging.properties</test-jul-config-file>
 
-        <seamless.version>1.0-SNAPSHOT</seamless.version>
+        <seamless.version>1.0.0</seamless.version>
         <testng.version>5.14.9</testng.version>
         <javax.inject.version>1</javax.inject.version>
         <gwt.maven.plugin.version>2.6.1</gwt.maven.plugin.version>
@@ -81,7 +81,7 @@
             <id>4thline-repo</id>
             <url>http://4thline.org/m2</url>
             <snapshots>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
             </snapshots>
         </repository>
         <repository>
@@ -195,7 +195,7 @@
                 <!-- Website lifecycle -->
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.0-beta-3</version>
+                    <version>3.3</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.doxia</groupId>
@@ -214,8 +214,9 @@
             <!-- Waaargh -->
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
                 <configuration>
-                    <webappDirectory>${build.directory}/${project.artifactId}.war</webappDirectory>
+                    <webappDirectory>${project.build.directory}/${project.artifactId}.war</webappDirectory>
                 </configuration>
             </plugin>
 
