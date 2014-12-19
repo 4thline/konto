@@ -20,21 +20,13 @@
     <set-property name="gwt.logging.enabled" value="TRUE"/>
     <set-property name="gwt.logging.logLevel" value="FINEST"/>
 
-    <set-property name="gwt.logging.popupHandler" value="DISABLED"/>
-    <set-property name="gwt.logging.firebugHandler" value="ENABLED"/>
-    <set-property name="gwt.logging.consoleHandler" value="DISABLED"/>
-
     <!-- This will give us shorter obfuscated CSS class names. We guarantee
          that there will be no class names that will conflict with /KONTO.+/ -->
     <set-configuration-property name="CssResource.obfuscationPrefix" value="KONTO"/>
 
-    <!-- GWT 2.3.0 release notes, will be the future default -->
-    <set-configuration-property name="UiBinder.useSafeHtmlTemplates" value="true"/>
-
-    <!-- Super dev mode -->
-    <add-linker name="xsiframe"/>
     <!--
     TODO Disable before commit
+    <set-property name="user.agent" value="safari"/>
     <set-property name="user.agent" value="gecko1_8"/>
     -->
 

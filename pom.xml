@@ -8,7 +8,7 @@
 
     <groupId>org.fourthline.konto</groupId>
     <artifactId>konto</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <!-- ##################################################################################################### -->
@@ -60,9 +60,9 @@
         <seamless.version>1.0.0</seamless.version>
         <testng.version>5.14.9</testng.version>
         <javax.inject.version>1</javax.inject.version>
-        <gwt.maven.plugin.version>2.6.1</gwt.maven.plugin.version>
-        <gwt.version>2.6.1</gwt.version>
-        <gin.version>1.5.0</gin.version>
+        <gwt.maven.plugin.version>2.7.0</gwt.maven.plugin.version>
+        <gwt.version>2.7.0</gwt.version>
+        <gin.version>2.1.2</gin.version>
         <hibernate.core.version>3.6.0.Final</hibernate.core.version>
         <hibernate.validator.version>4.1.0.Final</hibernate.validator.version>
         <hibernate.tools.version>3.2.4.GA</hibernate.tools.version>
@@ -405,6 +405,13 @@
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
+            <version>${gwt.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-codeserver</artifactId>
             <version>${gwt.version}</version>
             <scope>provided</scope>
         </dependency>
