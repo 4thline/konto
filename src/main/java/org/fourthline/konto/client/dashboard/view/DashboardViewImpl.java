@@ -98,7 +98,7 @@ public class DashboardViewImpl extends Composite implements DashboardView {
 
 
     @Override
-    public void setReportLines(ReportLines assetLines, ReportLines liabilityLines) {
+    public void setReportLines(ReportLines assetLines, ReportLines liabilityLines, MonetaryAmount networth) {
         getWidget().setVisible(true);
         
         assetTable.setValue(assetLines, false, false, true, false);
@@ -111,9 +111,6 @@ public class DashboardViewImpl extends Composite implements DashboardView {
         liabilityPanel.setWidget(liabilityTable);
         liabilitySumLabel.setText(liabilityLines.getTotal().negate().getReportString(true, true));
 
-        MonetaryAmount networth = assetLines.getTotal().add(
-                liabilityLines.getTotal()
-        );
         networthLabel.setText(networth.getReportString(true, true));
     }
 

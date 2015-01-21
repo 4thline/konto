@@ -24,23 +24,14 @@
 
     <ui:style type="org.fourthline.konto.client.report.view.ReportSelectViewImpl.Style">
 
-        .label1Column {
-            width: 4em;
+        .label {
+            text-align: right;
+            width: 15em;
+            white-space: nowrap;
         }
 
-        .field1Column {
-            width: 10em;
-        }
-
-        .label2Column {
-            width: 10em;
-        }
-
-        .field2Column {
-        }
-
-        .lastColumn {
-            width: 10em;
+        .shortLabel {
+            width: 6em;
         }
 
         .ofDayDateBox {
@@ -55,88 +46,139 @@
 
                 <g:HTMLPanel>
                     <table cellpadding="0" cellspacing="0" border="0">
-                        <colgroup>
-                            <col class="{style.label1Column}"/>
-                            <col class="{style.field1Column}"/>
-                            <col class="{style.label2Column}"/>
-                            <col class="{style.field2Column}"/>
-                            <col class="{style.label2Column}"/>
-                            <col class="{style.field2Column}"/>
-                            <col class="{style.lastColumn}"/>
-                        </colgroup>
                         <tr>
-                            <td align="right" class="{themeStyle.FormCell}">
-                                <g:Label addStyleNames="{themeStyle.FormLabel}">Type:</g:Label>
-                            </td>
-                            <td class="{themeStyle.FormCell}">
-                                <g:ListBox ui:field="typeListBox"
-                                           addStyleNames="{themeStyle.FormField}"
-                                           multipleSelect="false"/>
-                            </td>
+                            <td>
+                                <table cellpadding="0" cellspacing="0" border="0">
+                                    <colgroup>
+                                        <col class="{style.label} {style.shortLabel}"/>
+                                        <col class=""/>
+                                        <col class="{style.label} {style.shortLabel}"/>
+                                        <col class=""/>
+                                        <col class=""/>
+                                        <col class=""/>
+                                    </colgroup>
+                                    <tr>
+                                        <td align="right" class="{themeStyle.FormCell}">
+                                            <g:Label addStyleNames="{themeStyle.FormLabel}">Type:</g:Label>
+                                        </td>
+                                        <td class="{themeStyle.FormCell}">
+                                            <g:ListBox ui:field="typeListBox"
+                                                       addStyleNames="{themeStyle.FormField}"
+                                                       multipleSelect="false"/>
+                                        </td>
 
-                            <td align="right" class="{themeStyle.FormCell}">
-                                <g:Label addStyleNames="{themeStyle.FormLabel}">Exchange rates:</g:Label>
-                            </td>
-                            <td class="{themeStyle.FormCellNoPaddingLR}">
-                                <g:CheckBox ui:field="showExchangeCheckBox"
-                                            addStyleNames="{themeStyle.FormFieldNoBorder}"/>
-                            </td>
+                                        <td align="right" class="{themeStyle.FormCell}">
+                                            <g:Label addStyleNames="{themeStyle.FormLabel}">Date:</g:Label>
+                                        </td>
+                                        <td class="{themeStyle.FormCell}">
+                                            <w:AutocompleteDateTextBox ui:field="dateBox"
+                                                                       visible="false"
+                                                                       addStyleNames="{style.ofDayDateBox} {themeStyle.FormField}"/>
+                                            <w:DateRangeSelect ui:field="dateRangeSelect"
+                                                               visible="false"/>
+                                        </td>
 
-                            <td align="right" class="{themeStyle.FormCell}">
-                                <g:Label addStyleNames="{themeStyle.FormLabel}">Entry details:</g:Label>
-                            </td>
-                            <td class="{themeStyle.FormCellNoPaddingLR}">
-                                <g:CheckBox ui:field="showDetailedCheckBox"
-                                            enabled="false"
-                                            addStyleNames="{themeStyle.FormFieldNoBorder}"/>
-                            </td>
+                                    </tr>
+                                </table>
+                                <table cellpadding="0" cellspacing="0" border="0">
+                                    <colgroup>
+                                        <col class="{style.label} {style.shortLabel}"/>
+                                        <col class=""/>
+                                        <col class="{style.label}"/>
+                                        <col class=""/>
+                                        <col class="{style.label}"/>
+                                        <col class=""/>
+                                        <col class="{style.label}"/>
+                                        <col class=""/>
+                                        <col class="{style.label}"/>
+                                        <col class=""/>
+                                    </colgroup>
+                                    <tr>
 
-                            <td class="{themeStyle.FormCell}" align="center" valign="middle">
-                                <g:Button ui:field="bookmarkButton"
-                                          addStyleNames="{themeStyle.ToolbarButtonSmall}">
-                                    Bookmark
-                                </g:Button>
-                            </td>
+                                        <td align="right" class="{themeStyle.FormCell}">
+                                            <g:Label addStyleNames="{themeStyle.FormLabel}">Currency:</g:Label>
+                                        </td>
+                                        <td class="{themeStyle.FormCell}">
+                                            <g:ListBox ui:field="currencyListBox"
+                                                       addStyleNames="{themeStyle.FormField}"
+                                                       multipleSelect="false"/>
+                                        </td>
 
-                        </tr>
-                        <tr>
-                            <td align="right" class="{themeStyle.FormCell}">
-                                <g:Label addStyleNames="{themeStyle.FormLabel}">Date:</g:Label>
-                            </td>
-                            <td class="{themeStyle.FormCell}">
-                                <w:AutocompleteDateTextBox ui:field="dateBox"
-                                                           visible="false"
-                                                           addStyleNames="{style.ofDayDateBox} {themeStyle.FormField}"/>
-                                <w:DateRangeSelect ui:field="dateRangeSelect"
-                                                   visible="false"/>
-                            </td>
+                                        <td align="right" class="{themeStyle.FormCell}">
+                                            <g:Label addStyleNames="{themeStyle.FormLabel}">Exchange rates:</g:Label>
+                                        </td>
+                                        <td class="{themeStyle.FormCellNoPaddingLR}">
+                                            <g:CheckBox ui:field="showExchangeCheckBox"
+                                                        addStyleNames="{themeStyle.FormFieldNoBorder}"/>
+                                        </td>
 
-                            <td align="right" class="{themeStyle.FormCell}">
-                                <g:Label addStyleNames="{themeStyle.FormLabel}">Zero balances:</g:Label>
-                            </td>
-                            <td class="{themeStyle.FormCellNoPaddingLR}">
-                                <g:CheckBox ui:field="showZeroBalancesCheckBox"
-                                            addStyleNames="{themeStyle.FormFieldNoBorder}"/>
-                            </td>
+                                        <td align="right" class="{themeStyle.FormCell}">
+                                            <g:Label addStyleNames="{themeStyle.FormLabel}">Entry details:</g:Label>
+                                        </td>
+                                        <td class="{themeStyle.FormCellNoPaddingLR}">
+                                            <g:CheckBox ui:field="showDetailedCheckBox"
+                                                        enabled="false"
+                                                        addStyleNames="{themeStyle.FormFieldNoBorder}"/>
+                                        </td>
 
-                            <td align="right" class="{themeStyle.FormCell}">
-                                <g:Label addStyleNames="{themeStyle.FormLabel}">From/To account:</g:Label>
-                            </td>
-                            <td class="{themeStyle.FormCellNoPaddingLR}">
-                                <g:CheckBox ui:field="showDetailedAccountsCheckBox"
-                                            enabled="false"
-                                            addStyleNames="{themeStyle.FormFieldNoBorder}"/>
-                            </td>
+                                        <td align="right" class="{themeStyle.FormCell}">
+                                            <g:Label addStyleNames="{themeStyle.FormLabel}">Zero balances:</g:Label>
+                                        </td>
+                                        <td class="{themeStyle.FormCellNoPaddingLR}">
+                                            <g:CheckBox ui:field="showZeroBalancesCheckBox"
+                                                        addStyleNames="{themeStyle.FormFieldNoBorder}"/>
+                                        </td>
 
-                            <td class="{themeStyle.FormCell}" align="center" valign="middle">
-                                <g:Button ui:field="printButton"
-                                          addStyleNames="{themeStyle.ToolbarButtonSmall}">
-                                    Print
-                                </g:Button>
-                            </td>
+                                        <td align="right" class="{themeStyle.FormCell}">
+                                            <g:Label addStyleNames="{themeStyle.FormLabel}">From/To account:</g:Label>
+                                        </td>
+                                        <td class="{themeStyle.FormCellNoPaddingLR}">
+                                            <g:CheckBox ui:field="showDetailedAccountsCheckBox"
+                                                        enabled="false"
+                                                        addStyleNames="{themeStyle.FormFieldNoBorder}"/>
+                                        </td>
 
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>
+
+                                <table cellpadding="0" cellspacing="0" border="0">
+                                    <colgroup>
+                                        <col class="{style.label} {style.shortLabel}"/>
+                                        <col class=""/>
+                                        <col class="{style.label}"/>
+                                        <col class=""/>
+                                        <col class="{style.label}"/>
+                                        <col class=""/>
+                                        <col class="{style.label}"/>
+                                        <col class=""/>
+                                        <col class="{style.label}"/>
+                                        <col class=""/>
+                                    </colgroup>
+                                    <tr>
+                                        <td align="right" class="{themeStyle.FormCell}">
+                                            <g:Button ui:field="bookmarkButton"
+                                                      addStyleNames="{themeStyle.ToolbarButtonSmall}">
+                                                Bookmark
+                                            </g:Button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right" class="{themeStyle.FormCell}">
+                                            <g:Button ui:field="printButton"
+                                                      addStyleNames="{themeStyle.ToolbarButtonSmall}">
+                                                Print
+                                            </g:Button>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </td>
                         </tr>
                     </table>
+
+
                 </g:HTMLPanel>
 
             </g:VerticalPanel>

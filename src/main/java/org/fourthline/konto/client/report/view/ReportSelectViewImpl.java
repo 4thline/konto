@@ -34,6 +34,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import org.fourthline.konto.client.bundle.Bundle;
 import org.fourthline.konto.client.report.LineReportType;
+import org.fourthline.konto.shared.Constants;
 import org.seamless.gwt.component.client.widget.AutocompleteDateTextBox;
 import org.seamless.gwt.component.client.widget.DateRangeSelect;
 import org.seamless.util.time.DateFormat;
@@ -77,6 +78,8 @@ public class ReportSelectViewImpl extends Composite implements ReportSelectView 
     CheckBox showExchangeCheckBox;
     @UiField
     CheckBox showZeroBalancesCheckBox;
+    @UiField
+    ListBox currencyListBox;
     @UiField
     Button printButton;
     @UiField
@@ -151,6 +154,14 @@ public class ReportSelectViewImpl extends Composite implements ReportSelectView 
             }
         });
 
+        currencyListBox.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent event) {
+                presenter.onCurrencySelected(currencyListBox.getSelectedItemText());
+            }
+        });
+
+        initCurrencyListBox();
         initTypeListBox();
     }
 
@@ -195,6 +206,23 @@ public class ReportSelectViewImpl extends Composite implements ReportSelectView 
                 showExchangeCheckBox.getValue(),
                 showZeroBalancesCheckBox.getValue()
         );
+    }
+
+    @Override
+    public void setCurrencyCodes(String[] currencyCodes, String selectedCurrencyCode) {
+            currencyListBox.clear();
+            if (currencyCodes != null)
+                for (int i = 0; i < currencyCodes.length; i++) {
+                    String currencyCode = currencyCodes[i];
+                    currencyListBox.addItem(currencyCode);
+                    if (currencyCode.equals(selectedCurrencyCode))
+                        currencyListBox.setSelectedIndex(i);
+                }
+    }
+
+    @Override
+    public String getCurrencyCode() {
+        return currencyListBox.getSelectedItemText();
     }
 
     @UiHandler("printButton")
@@ -261,4 +289,9 @@ public class ReportSelectViewImpl extends Composite implements ReportSelectView 
             }
         }
     }
+
+    protected void initCurrencyListBox() {
+        setCurrencyCodes(new String[]{Constants.SYSTEM_BASE_CURRENCY_CODE}, null);
+    }
+
 }

@@ -36,6 +36,8 @@ public interface ReportSelectView extends IsWidget {
 
         void onReportOptionsUpdated(LineReportOption reportOptions);
 
+        void onCurrencySelected(String currencyCode);
+
         void onBookmark();
 
         void onPrint();
@@ -70,6 +72,10 @@ public interface ReportSelectView extends IsWidget {
     LineReportType getReportType();
 
     DateRange getDateRange(LineReportType type);
+
+    void setCurrencyCodes(String[] currencyCodes, String selectedCurrencyCode);
+
+    String getCurrencyCode();
 
     LineReportOption getReportOptions();
 }

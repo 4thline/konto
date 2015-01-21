@@ -44,8 +44,8 @@ import java.util.Date;
  * @author Christian Bauer
  */
 public class DashboardActivity
-        extends AbstractActivity
-        implements DashboardView.Presenter, GlobalSettingsRefreshedEvent.Handler {
+    extends AbstractActivity
+    implements DashboardView.Presenter, GlobalSettingsRefreshedEvent.Handler {
 
     final DashboardView view;
     final PlaceController placeController;
@@ -80,27 +80,29 @@ public class DashboardActivity
         bus.fireEvent(new AccountSelectionModeChange());
 
         service.getReportLines(
-                new LineReportCriteria(
-                        LineReportType.BS.getDefaultAccountSelection(),
-                        Constants.SYSTEM_BASE_CURRENCY_CODE,
-                        new Date(),
-                        LineReportType.BS,
-                        new DateRange(null, new Date()),
-                        new LineReportOption(false, false, true, false)
-                ),
-                new AsyncCallback<ReportLines[]>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        bus.fireEvent(new ServerFailureNotifyEvent(caught));
-                    }
-
-                    @Override
-                    public void onSuccess(ReportLines[] result) {
-                        view.setReportLines(
-                                result[0], result[1]
-                        );
-                    }
+            new LineReportCriteria(
+                LineReportType.BS.getDefaultAccountSelection(),
+                Constants.SYSTEM_BASE_CURRENCY_CODE,
+                new Date(),
+                LineReportType.BS,
+                new DateRange(null, new Date()),
+                new LineReportOption(false, false, true, false)
+            ),
+            new AsyncCallback<ReportLines[]>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    bus.fireEvent(new ServerFailureNotifyEvent(caught));
                 }
+
+                @Override
+                public void onSuccess(ReportLines[] result) {
+                    view.setReportLines(
+                        result[0],
+                        result[1],
+                        result[0].getTotal().add(result[1].getTotal())
+                    );
+                }
+            }
         );
     }
 

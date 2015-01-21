@@ -19,6 +19,7 @@ package org.fourthline.konto.client.dashboard.view;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
+import org.fourthline.konto.shared.MonetaryAmount;
 import org.seamless.util.time.DateFormat;
 import org.fourthline.konto.shared.result.ReportLines;
 
@@ -35,6 +36,6 @@ public interface DashboardView extends IsWidget {
 
     void setDateFormat(DateFormat dateFormat);
 
-    void setReportLines(ReportLines assetLines, ReportLines liabilityLines);
+    void setReportLines(ReportLines assetLines, ReportLines liabilityLines, MonetaryAmount networth);
 
 }

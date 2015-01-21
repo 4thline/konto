@@ -18,37 +18,37 @@
 package org.fourthline.konto.client.report;
 
 import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.web.bindery.event.shared.EventBus;
 import org.fourthline.konto.client.ledger.event.AccountSelectionChange;
 import org.fourthline.konto.client.ledger.event.AccountSelectionModeChange;
-import org.seamless.gwt.notify.client.Message;
-import org.seamless.gwt.notify.client.ServerFailureNotifyEvent;
-import org.seamless.gwt.notify.client.NotifyEvent;
 import org.fourthline.konto.client.report.view.ReportResultView;
 import org.fourthline.konto.client.report.view.ReportSelectView;
 import org.fourthline.konto.client.report.view.ReportView;
+import org.fourthline.konto.client.service.CurrencyServiceAsync;
 import org.fourthline.konto.client.service.LedgerServiceAsync;
 import org.fourthline.konto.client.service.ReportServiceAsync;
 import org.fourthline.konto.client.settings.GlobalSettings;
 import org.fourthline.konto.client.settings.event.GlobalSettingsRefreshedEvent;
-import org.seamless.gwt.component.client.Print;
 import org.fourthline.konto.shared.AccountType;
 import org.fourthline.konto.shared.Constants;
-import org.seamless.util.time.DateRange;
+import org.fourthline.konto.shared.entity.MonetaryUnit;
 import org.fourthline.konto.shared.entity.settings.GlobalOption;
 import org.fourthline.konto.shared.query.LineReportCriteria;
 import org.fourthline.konto.shared.query.LineReportOption;
 import org.fourthline.konto.shared.result.ReportLines;
+import org.seamless.gwt.component.client.Print;
+import org.seamless.gwt.notify.client.Message;
+import org.seamless.gwt.notify.client.NotifyEvent;
+import org.seamless.gwt.notify.client.ServerFailureNotifyEvent;
+import org.seamless.util.time.DateRange;
 
 import javax.inject.Inject;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -65,11 +65,32 @@ public class ReportActivity extends AbstractActivity
         AccountSelectionChange.Handler,
         GlobalSettingsRefreshedEvent.Handler {
 
+    class InitCurrencyCodesCallback implements AsyncCallback<List<MonetaryUnit>> {
+
+        @Override
+        public void onFailure(Throwable caught) {
+            bus.fireEvent(new ServerFailureNotifyEvent(caught));
+        }
+
+        @Override
+        public void onSuccess(List<MonetaryUnit> result) {
+            List<String> currencyCodes = new ArrayList<String>();
+            for (MonetaryUnit monetaryUnit : result) {
+                currencyCodes.add(monetaryUnit.getCurrencyCode());
+            }
+            view.getReportSelectView().setCurrencyCodes(
+                currencyCodes.toArray(new String[currencyCodes.size()]),
+                criteria != null ? criteria.getCurrencyCode() : view.getReportSelectView().getCurrencyCode()
+            );
+        }
+    }
+
     final ReportView view;
     final PlaceController placeController;
     final EventBus bus;
     final ReportServiceAsync reportService;
     final LedgerServiceAsync ledgerService;
+    final CurrencyServiceAsync currencyService;
 
     GlobalSettings globalSettings;
     LineReportCriteria criteria;
@@ -80,12 +101,14 @@ public class ReportActivity extends AbstractActivity
                           EventBus bus,
                           ReportServiceAsync reportService,
                           LedgerServiceAsync ledgerService,
+                          CurrencyServiceAsync currencyService,
                           GlobalSettings globalSettings) {
         this.view = view;
         this.placeController = placeController;
         this.bus = bus;
         this.reportService = reportService;
         this.ledgerService = ledgerService;
+        this.currencyService = currencyService;
 
         onSettingsRefreshed(globalSettings);
     }
@@ -123,6 +146,9 @@ public class ReportActivity extends AbstractActivity
         // We store the account selection in our view because we have no direct
         // connection with the account select tree and can't query its state
         view.setAccountSelection(criteria.getAccountSelection());
+
+        // Init the currencies
+        currencyService.getMonetaryUnits(new InitCurrencyCodesCallback());
 
         // Switch the account tree select widget to whatever is in the criteria
         bus.fireEvent(new AccountSelectionModeChange(
@@ -231,6 +257,19 @@ public class ReportActivity extends AbstractActivity
     }
 
     @Override
+    public void onCurrencySelected(String currencyCode) {
+        criteria = new LineReportCriteria(
+                criteria.getAccountSelection(),
+                currencyCode,
+                criteria.getDayOfExchangeRate(),
+                criteria.getType(),
+                criteria.getRange(),
+                criteria.getOptions()
+        );
+        goTo(new ReportPlace(criteria));
+    }
+
+    @Override
     public void onBookmark() {
         StringBuilder title = new StringBuilder();
         title.append(criteria.getType().getLabel());
@@ -267,8 +306,8 @@ public class ReportActivity extends AbstractActivity
                 view.getAccountSelection() != null && useViewState
                         ? view.getAccountSelection()
                         : type.getDefaultAccountSelection(),
-                // Reset currency
-                Constants.SYSTEM_BASE_CURRENCY_CODE,
+                // Reset currency (always take the selected currency code from view)
+                view.getReportSelectView().getCurrencyCode(),
                 // Reset day of exchange rate
                 new Date(),
                 // Reset type
