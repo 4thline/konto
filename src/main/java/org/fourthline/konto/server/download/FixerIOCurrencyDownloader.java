@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 4th Line GmbH, Switzerland
+ * Copyright (C) 2018 4th Line GmbH, Switzerland
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,51 +17,74 @@
 
 package org.fourthline.konto.server.download;
 
-import org.seamless.util.io.IO;
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
 import org.fourthline.konto.server.dao.CurrencyDAO;
 import org.fourthline.konto.shared.entity.CurrencyPair;
+import org.seamless.util.io.IO;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Christian Bauer
  */
-public class YahooCurrencyDownloader extends CurrencyDownloader {
+public class FixerIOCurrencyDownloader extends CurrencyDownloader {
 
     public static final String BASE_URL =
-            "http://download.finance.yahoo.com/d/quotes.csv?s=%1$s&f=l1";
+        "https://api.fixer.io/latest?base=%s&symbols=%s";
 
-    public YahooCurrencyDownloader(CurrencyDAO currencyDAO) {
+    public FixerIOCurrencyDownloader(CurrencyDAO currencyDAO) {
         super(currencyDAO);
     }
 
     @Override
     protected void updateExchangeRates(List<CurrencyPair> pairs) throws Exception {
 
-        StringBuilder sb = new StringBuilder();
+        Map<String, List<String>> pairGroups = new HashMap<String, List<String>>();
         for (CurrencyPair pair : pairs) {
-            sb.append(pair.getFromCode()).append(pair.getToCode()).append("=X");
-            sb.append("+");
-        }
-        if (sb.length() > 0) sb.deleteCharAt(sb.length() - 1);
-        URL url = new URL(String.format(BASE_URL, sb.toString()));
-
-        String ratesString = retrieveExchangeRates(url);
-        if (ratesString == null) {
-            // Shouldn't happen, it's just the ugly HTTP client API in the JDK
-            throw new Exception("Rates couldn't be retrieved.");
+            if (!pairGroups.containsKey(pair.getFromCode())) {
+                pairGroups.put(pair.getFromCode(), new ArrayList<String>());
+            }
+            List<String> group = pairGroups.get(pair.getFromCode());
+            group.add(pair.getToCode());
         }
 
-        String[] rates = ratesString.split("\n");
-        for (int i = 0; i < pairs.size(); i++) {
-            BigDecimal exchangeRate = new BigDecimal(rates[i].trim());
-            CurrencyPair pair = pairs.get(i);
-            pair.setExchangeRate(exchangeRate);
+        for (Map.Entry<String, List<String>> entry : pairGroups.entrySet()) {
+
+            StringBuilder groupString = new StringBuilder();
+            for (String s : entry.getValue()) {
+                groupString.append(s).append(",");
+            }
+            if (groupString.length() > 0)
+                groupString.deleteCharAt(groupString.length()-1);
+
+            String result = retrieveExchangeRates(new URL(String.format(BASE_URL, entry.getKey(), groupString)));
+            if (result == null)
+                return;
+
+            JsonValue json = Json.parse(result);
+            for (CurrencyPair pair : pairs) {
+                if (json.asObject().get("base").asString().equals(pair.getFromCode())) {
+                    JsonObject rates = json.asObject().get("rates").asObject();
+                    for (String rateName : rates.names()) {
+                        if (rateName.equals((pair.getToCode()))) {
+                            pair.setExchangeRate(
+                                new BigDecimal(rates.get(rateName).asDouble()).setScale(CurrencyPair.SCALE, RoundingMode.HALF_UP)
+                            );
+                        }
+                    }
+                }
+            }
         }
     }
 

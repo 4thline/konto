@@ -71,6 +71,7 @@
         <javassist.version>3.12.1.GA</javassist.version>
         <slf4j.impl.version>1.6.1</slf4j.impl.version>
         <h2.version>1.3.158</h2.version>
+        <minimaljson.version>0.9.5</minimaljson.version>
 
     </properties>
 
@@ -135,6 +136,7 @@
                             them outside of the target WAR
                          -->
                         <deploy>${project.build.directory}/gwt-deploy</deploy>
+                        <outputDirectory>${project.build.directory}/${project.artifactId}.war</outputDirectory>
                     </configuration>
                 </plugin>
 
@@ -305,6 +307,14 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
 
         </plugins>
 
@@ -466,6 +476,11 @@
             <version>${h2.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.eclipsesource.minimal-json</groupId>
+            <artifactId>minimal-json</artifactId>
+            <version>${minimaljson.version}</version>
+        </dependency>
     </dependencies>
 
 

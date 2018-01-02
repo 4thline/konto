@@ -157,14 +157,6 @@ public class ReportActivity extends AbstractActivity
         ));
 
         // Execute the query on start, the only way to "refresh" is to go to a new ReportPlace
-        bus.fireEvent(new NotifyEvent(
-                new Message(
-                        true, // Modal
-                        Level.INFO,
-                        "Generating Report",
-                        "Please wait..."
-                )
-        ));
         reportService.getReportLines(
                 criteria,
                 new AsyncCallback<ReportLines[]>() {

@@ -255,14 +255,6 @@ public class LedgerActivity extends AbstractActivity implements
 
     protected void loadLedgerLines(final AcceptsOneWidget container,
                                    final boolean init, final Long selectEntryId, final Long selectSplitId) {
-        bus.fireEvent(new NotifyEvent(
-                new Message(
-                        true,
-                        Level.INFO,
-                        "Loading entries of account",
-                        "Please wait..."
-                )
-        ));
         ledgerService.getLedgerLines(
                 new LedgerLinesQueryCriteria(descriptionFilter, true, coordinates.getAccountId(), effectiveOnFilter, selectEntryId),
                 new AsyncCallback<LedgerLines>() {
