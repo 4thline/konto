@@ -24,9 +24,12 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import org.fourthline.konto.client.dashboard.view.DashboardView;
+import org.fourthline.konto.client.ledger.LedgerPlace;
 import org.fourthline.konto.client.ledger.event.AccountSelectionModeChange;
+import org.fourthline.konto.client.ledger.event.SingleAccountSelected;
+import org.fourthline.konto.shared.LedgerCoordinates;
 import org.seamless.gwt.notify.client.ServerFailureNotifyEvent;
-import org.fourthline.konto.client.report.LineReportType;
+import org.fourthline.konto.client.report.ReportType;
 import org.fourthline.konto.client.service.ReportServiceAsync;
 import org.fourthline.konto.client.settings.GlobalSettings;
 import org.fourthline.konto.client.settings.event.GlobalSettingsRefreshedEvent;
@@ -45,7 +48,7 @@ import java.util.Date;
  */
 public class DashboardActivity
     extends AbstractActivity
-    implements DashboardView.Presenter, GlobalSettingsRefreshedEvent.Handler {
+    implements DashboardView.Presenter, SingleAccountSelected.Handler, GlobalSettingsRefreshedEvent.Handler {
 
     final DashboardView view;
     final PlaceController placeController;
@@ -75,16 +78,17 @@ public class DashboardActivity
         view.setPresenter(this);
         container.setWidget(view.asWidget());
 
+        activityBus.addHandler(SingleAccountSelected.TYPE, this);
         activityBus.addHandler(GlobalSettingsRefreshedEvent.TYPE, this);
 
         bus.fireEvent(new AccountSelectionModeChange());
 
         service.getReportLines(
             new LineReportCriteria(
-                LineReportType.BS.getDefaultAccountSelection(),
+                ReportType.BS.getDefaultAccountSelection(),
                 Constants.SYSTEM_BASE_CURRENCY_CODE,
                 new Date(),
-                LineReportType.BS,
+                ReportType.BS,
                 new DateRange(null, new Date()),
                 new LineReportOption(false, false, true, false)
             ),
@@ -114,5 +118,10 @@ public class DashboardActivity
     @Override
     public void goTo(Place place) {
         placeController.goTo(place);
+    }
+
+    @Override
+    public void onSingleAccountSelected(SingleAccountSelected event) {
+        goTo(new LedgerPlace(new LedgerCoordinates(event.getSelection().getId())));
     }
 }

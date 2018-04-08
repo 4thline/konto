@@ -183,6 +183,12 @@
                                                        text="Edit Account"
                                                        imageResource="{themeBundle.icon16.edit}"/>
                                 </td>
+                                <td class="{themeStyle.ToolbarCell}" align="right">
+                                    <w:ImageTextButton addStyleNames="{themeStyle.ToolbarButtonSmall}"
+                                                       ui:field="showChartButton"
+                                                       text="Show Chart"
+                                                       imageResource="{themeBundle.icon16.info}"/>
+                                </td>
                             </tr>
                         </table>
                     </g:HTMLPanel>

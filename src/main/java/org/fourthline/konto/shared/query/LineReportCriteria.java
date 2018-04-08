@@ -17,7 +17,7 @@
 
 package org.fourthline.konto.shared.query;
 
-import org.fourthline.konto.client.report.LineReportType;
+import org.fourthline.konto.client.report.ReportType;
 import org.fourthline.konto.shared.Constants;
 import org.seamless.util.time.DateRange;
 import org.fourthline.konto.shared.entity.Account;
@@ -29,7 +29,8 @@ import java.util.Date;
  */
 public class LineReportCriteria extends ReportCriteria {
 
-    protected LineReportType type;
+    protected ReportType type;
+    protected Date dayOfExchangeRate;
     protected DateRange range;
     protected LineReportOption options;
 
@@ -37,14 +38,15 @@ public class LineReportCriteria extends ReportCriteria {
     }
 
     public LineReportCriteria(AccountsQueryCriteria[] accountSelection, String currencyCode, Date dayOfExchangeRate,
-                              LineReportType type, DateRange range) {
+                              ReportType type, DateRange range) {
         this(accountSelection, currencyCode, dayOfExchangeRate, type, range, new LineReportOption());
     }
 
     public LineReportCriteria(AccountsQueryCriteria[] accountSelection, String currencyCode, Date dayOfExchangeRate,
-                              LineReportType type, DateRange range, LineReportOption options) {
-        super(accountSelection, currencyCode, dayOfExchangeRate);
+                              ReportType type, DateRange range, LineReportOption options) {
+        super(accountSelection, currencyCode);
         this.type = type;
+        this.dayOfExchangeRate = dayOfExchangeRate;
         this.range = range;
         this.options = options;
 
@@ -62,12 +64,20 @@ public class LineReportCriteria extends ReportCriteria {
 
     }
 
-    public LineReportType getType() {
+    public ReportType getType() {
         return type;
     }
 
-    public void setType(LineReportType type) {
+    public void setType(ReportType type) {
         this.type = type;
+    }
+
+    public Date getDayOfExchangeRate() {
+        return dayOfExchangeRate;
+    }
+
+    public void setDayOfExchangeRate(Date dayOfExchangeRate) {
+        this.dayOfExchangeRate = dayOfExchangeRate;
     }
 
     public DateRange getRange() {
@@ -89,7 +99,7 @@ public class LineReportCriteria extends ReportCriteria {
     public static LineReportCriteria valueOf(String s) {
         try {
 
-            LineReportType type = LineReportType.valueOf(s.substring(0, 2));
+            ReportType type = ReportType.valueOf(s.substring(0, 2));
 
             String currencyCode = null;
             if (s.contains("cc=")) {

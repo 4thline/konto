@@ -41,6 +41,8 @@ public interface LedgerView extends IsWidget {
         void filterDescription(String filter);
 
         void goTo(Place place);
+
+        void showChart();
     }
 
     void setPresenter(Presenter presenter);

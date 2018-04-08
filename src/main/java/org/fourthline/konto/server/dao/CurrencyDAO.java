@@ -17,102 +17,133 @@
 
 package org.fourthline.konto.server.dao;
 
-import org.hibernate.transform.ResultTransformer;
 import org.fourthline.konto.shared.entity.CurrencyPair;
 import org.fourthline.konto.shared.entity.MonetaryUnit;
+import org.hibernate.transform.ResultTransformer;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Christian Bauer
  */
 public class CurrencyDAO extends HibernateDAO {
 
+    final protected Map<CurrencyPair, List<CurrencyPair>> currencyPairsCache = new HashMap<>();
+
     public List<MonetaryUnit> getMonetaryUnits() {
         return getCurrentSession()
-                .createQuery("select mu from MonetaryUnit mu order by mu.currencyCode asc")
-                .list();
+            .createQuery("select mu from MonetaryUnit mu order by mu.currencyCode asc")
+            .list();
     }
 
+    @SuppressWarnings("unchecked")
     public List<CurrencyPair> getCurrencyPairs(String fromCode, String toCode) {
-        return getCurrentSession()
-                .createQuery(
+        synchronized (currencyPairsCache) {
+            List<CurrencyPair> result = null;
+            for (CurrencyPair currencyPair : currencyPairsCache.keySet()) {
+                if (currencyPair.equalsFromToCodes(fromCode, toCode)) {
+                    result = currencyPairsCache.get(currencyPair);
+                }
+            }
+            if (result == null) {
+                result = getCurrentSession()
+                    .createQuery(
                         "select cp, fromUnit, toUnit from CurrencyPair cp, " +
-                                "MonetaryUnit fromUnit, MonetaryUnit toUnit " +
-                                "where " +
-                                "cp.fromCode = :from and cp.toCode = :to " +
-                                "and fromUnit.currencyCode = cp.fromCode " +
-                                "and toUnit.currencyCode = cp.toCode " +
-                                "order by cp.createdOn desc"
-                )
-                .setString("from", fromCode)
-                .setString("to", toCode)
-                .setResultTransformer(new ResultTransformer() {
-                    @Override
-                    public Object transformTuple(Object[] objects, String[] strings) {
-                        CurrencyPair pair = (CurrencyPair) objects[0];
-                        pair.setFromUnit((MonetaryUnit) objects[1]);
-                        pair.setToUnit((MonetaryUnit) objects[2]);
-                        return pair;
-                    }
+                            "MonetaryUnit fromUnit, MonetaryUnit toUnit " +
+                            "where " +
+                            "cp.fromCode = :from and cp.toCode = :to " +
+                            "and fromUnit.currencyCode = cp.fromCode " +
+                            "and toUnit.currencyCode = cp.toCode " +
+                            "order by cp.createdOn desc"
+                    )
+                    .setString("from", fromCode)
+                    .setString("to", toCode)
+                    .setResultTransformer(new ResultTransformer() {
+                        @Override
+                        public Object transformTuple(Object[] objects, String[] strings) {
+                            CurrencyPair pair = (CurrencyPair) objects[0];
+                            pair.setFromUnit((MonetaryUnit) objects[1]);
+                            pair.setToUnit((MonetaryUnit) objects[2]);
+                            return pair;
+                        }
 
-                    @Override
-                    public List transformList(List list) {
-                        return list;
-                    }
-                })
-                .list();
+                        @Override
+                        public List transformList(List list) {
+                            return list;
+                        }
+                    })
+                    .list();
+                currencyPairsCache.put(new CurrencyPair(fromCode, toCode), result);
+            }
+            return result;
+        }
     }
 
     public MonetaryUnit getMonetaryUnit(String currencyCode) {
         if (currencyCode == null) return null;
         return (MonetaryUnit) getCurrentSession().createQuery(
-                "select mu from MonetaryUnit mu where mu.currencyCode = :cc"
+            "select mu from MonetaryUnit mu where mu.currencyCode = :cc"
         ).setString("cc", currencyCode).uniqueResult();
     }
 
     public void persist(MonetaryUnit mu) {
-        getCurrentSession().saveOrUpdate(mu);
+        synchronized (currencyPairsCache) {
+            currencyPairsCache.clear();
+            getCurrentSession().saveOrUpdate(mu);
+        }
     }
 
     public boolean delete(MonetaryUnit mu) {
-
-        boolean inUse = getCurrentSession().createQuery(
+        synchronized (currencyPairsCache) {
+            currencyPairsCache.clear();
+            boolean inUse = getCurrentSession().createQuery(
                 "select a from Account a where a.monetaryUnitId = :id"
-        ).setLong("id", mu.getId()).list().size() > 0;
-        if (inUse) return false;
+            ).setLong("id", mu.getId()).list().size() > 0;
+            if (inUse) return false;
 
-        getCurrentSession().delete(mu);
-        return true;
+            getCurrentSession().delete(mu);
+            return true;
+        }
     }
 
     public void persist(CurrencyPair pair) {
+        synchronized (currencyPairsCache) {
+            currencyPairsCache.clear();
 
-        // Delete (effectively overwrite) an existing rate with the same date
-        getCurrentSession().createQuery(
+            // Delete (effectively overwrite) an existing rate with the same date
+            getCurrentSession().createQuery(
                 "delete from CurrencyPair cp where " +
-                        "cp.fromCode = :from and " +
-                        "cp.toCode = :to and " +
-                        "cp.createdOn = :date"
-        ).setString("from", pair.getFromCode())
+                    "cp.fromCode = :from and " +
+                    "cp.toCode = :to and " +
+                    "cp.createdOn = :date"
+            ).setString("from", pair.getFromCode())
                 .setString("to", pair.getToCode())
                 .setDate("date", pair.getCreatedOn())
                 .executeUpdate();
 
-        getCurrentSession().save(pair);
+            getCurrentSession().save(pair);
+        }
     }
 
     public void delete(CurrencyPair pair) {
-        getCurrentSession().delete(pair);
+        synchronized (currencyPairsCache) {
+            currencyPairsCache.clear();
+            getCurrentSession().delete(pair);
+        }
     }
 
     public void deleteAll(CurrencyPair pair) {
-        getCurrentSession().createQuery(
+        synchronized (currencyPairsCache) {
+            currencyPairsCache.clear();
+            getCurrentSession().createQuery(
                 "delete from CurrencyPair cp where " +
-                        "cp.fromCode = :from and cp.toCode = :to"
-        ).setString("from", pair.getFromCode())
+                    "cp.fromCode = :from and cp.toCode = :to"
+            ).setString("from", pair.getFromCode())
                 .setString("to", pair.getToCode())
                 .executeUpdate();
+        }
     }
 
 }

@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import org.fourthline.konto.client.bundle.Bundle;
 import org.fourthline.konto.client.ledger.LedgerPlace;
-import org.fourthline.konto.client.report.LineReportType;
+import org.fourthline.konto.client.report.ReportType;
 import org.fourthline.konto.shared.AccountType;
 import org.seamless.util.time.DateFormat;
 import org.fourthline.konto.shared.LedgerCoordinates;
@@ -98,7 +98,7 @@ public class ReportResultViewImpl extends Composite implements ReportResultView 
     public void setReportLines(LineReportCriteria criteria, Map<AccountType, ReportLines> linesByType) {
         reportPanel.clear();
 
-        LineReportType reportType = criteria.getType();
+        ReportType reportType = criteria.getType();
 
         Label titleLabel = new Label(reportType.getLabel());
         titleLabel.addStyleName(style.titleLabel());

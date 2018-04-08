@@ -25,7 +25,10 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import org.fourthline.konto.client.currency.event.CurrencyPairModified;
 import org.fourthline.konto.client.currency.event.MonetaryUnitModified;
 import org.fourthline.konto.client.currency.view.CurrencyView;
+import org.fourthline.konto.client.ledger.LedgerPlace;
 import org.fourthline.konto.client.ledger.event.AccountSelectionModeChange;
+import org.fourthline.konto.client.ledger.event.SingleAccountSelected;
+import org.fourthline.konto.shared.LedgerCoordinates;
 import org.seamless.gwt.notify.client.Message;
 import org.seamless.gwt.notify.client.ServerFailureNotifyEvent;
 import org.seamless.gwt.notify.client.NotifyEvent;
@@ -45,11 +48,12 @@ import java.util.logging.Level;
  * @author Christian Bauer
  */
 public class CurrencyActivity extends AbstractActivity
-        implements
-        CurrencyView.Presenter,
-        GlobalSettingsRefreshedEvent.Handler,
-        MonetaryUnitModified.Handler,
-        CurrencyPairModified.Handler {
+    implements
+    CurrencyView.Presenter,
+    SingleAccountSelected.Handler,
+    GlobalSettingsRefreshedEvent.Handler,
+    MonetaryUnitModified.Handler,
+    CurrencyPairModified.Handler {
 
     class InitMonetaryUnitsCallback implements AsyncCallback<List<MonetaryUnit>> {
 
@@ -131,6 +135,7 @@ public class CurrencyActivity extends AbstractActivity
         view.setPresenter(this);
         containerWidget.setWidget(view.asWidget());
 
+        activityBus.addHandler(SingleAccountSelected.TYPE, this);
         activityBus.addHandler(GlobalSettingsRefreshedEvent.TYPE, this);
         activityBus.addHandler(MonetaryUnitModified.TYPE, this);
         activityBus.addHandler(CurrencyPairModified.TYPE, this);
@@ -138,7 +143,7 @@ public class CurrencyActivity extends AbstractActivity
         bus.fireEvent(new AccountSelectionModeChange());
 
         service.getMonetaryUnits(
-                new InitMonetaryUnitsCallback(monetaryUnitId)
+            new InitMonetaryUnitsCallback(monetaryUnitId)
         );
     }
 
@@ -172,9 +177,9 @@ public class CurrencyActivity extends AbstractActivity
     @Override
     public void onMonetaryUnitModified(MonetaryUnitModified event) {
         service.getMonetaryUnits(
-                new InitMonetaryUnitsCallback(
-                        event.getUnit() != null ? event.getUnit().getId() : null
-                )
+            new InitMonetaryUnitsCallback(
+                event.getUnit() != null ? event.getUnit().getId() : null
+            )
         );
     }
 
@@ -234,27 +239,32 @@ public class CurrencyActivity extends AbstractActivity
         if (selectedPair == null) return;
 
         service.removeAll(
-                selectedPair,
-                new AsyncCallback<Void>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        bus.fireEvent(new ServerFailureNotifyEvent(caught));
-                    }
-
-                    @Override
-                    public void onSuccess(Void result) {
-                        bus.fireEvent(new NotifyEvent(
-                                new Message(
-                                        Level.INFO,
-                                        "Exchange rates deleted",
-                                        "All exchange rates have been permanently removed."
-                                )
-                        ));
-                        refreshCurrencyPairs();
-                    }
+            selectedPair,
+            new AsyncCallback<Void>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    bus.fireEvent(new ServerFailureNotifyEvent(caught));
                 }
+
+                @Override
+                public void onSuccess(Void result) {
+                    bus.fireEvent(new NotifyEvent(
+                        new Message(
+                            Level.INFO,
+                            "Exchange rates deleted",
+                            "All exchange rates have been permanently removed."
+                        )
+                    ));
+                    refreshCurrencyPairs();
+                }
+            }
         );
 
+    }
+
+    @Override
+    public void onSingleAccountSelected(SingleAccountSelected event) {
+        placeController.goTo(new LedgerPlace(new LedgerCoordinates(event.getSelection().getId())));
     }
 
     protected CurrencyPair getSelectedPair() {
@@ -283,51 +293,51 @@ public class CurrencyActivity extends AbstractActivity
         currencyPairPresenter.startWith(selectedUnit, exchangeUnit, null);
 
         service.getCurrencyPairs(
-                selectedUnit,
-                exchangeUnit,
-                new AsyncCallback<List<CurrencyPair>>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        bus.fireEvent(new ServerFailureNotifyEvent(caught));
-                    }
-
-                    @Override
-                    public void onSuccess(List<CurrencyPair> result) {
-                        currencyPairs = result;
-                        view.setCurrencyPairs(selectedUnit, result);
-                    }
+            selectedUnit,
+            exchangeUnit,
+            new AsyncCallback<List<CurrencyPair>>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    bus.fireEvent(new ServerFailureNotifyEvent(caught));
                 }
+
+                @Override
+                public void onSuccess(List<CurrencyPair> result) {
+                    currencyPairs = result;
+                    view.setCurrencyPairs(selectedUnit, result);
+                }
+            }
         );
     }
 
     protected void showDownloadBusyMessage() {
         bus.fireEvent(new NotifyEvent(
-                new Message(
-                        true,
-                        Level.INFO,
-                        "Downloading exchange rates",
-                        "Please wait until download is complete..."
-                )
+            new Message(
+                true,
+                Level.INFO,
+                "Downloading exchange rates",
+                "Please wait until download is complete..."
+            )
         ));
     }
 
     protected void showDownloadFailedMessage(String msg) {
         bus.fireEvent(new NotifyEvent(
-                new Message(
-                        Level.WARNING,
-                        "Downloading exchange rates failed",
-                        msg
-                )
+            new Message(
+                Level.WARNING,
+                "Downloading exchange rates failed",
+                msg
+            )
         ));
     }
 
     protected void showDownloadCompleteMessage() {
         bus.fireEvent(new NotifyEvent(
-                new Message(
-                        Level.INFO,
-                        "Download complete",
-                        "Exchange rates have been downloaded."
-                )
+            new Message(
+                Level.INFO,
+                "Download complete",
+                "Exchange rates have been downloaded."
+            )
         ));
     }
 }

@@ -3,7 +3,9 @@ package org.fourthline.konto.test.mock;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.fourthline.konto.client.service.ReportService;
 import org.fourthline.konto.client.service.ReportServiceAsync;
+import org.fourthline.konto.shared.query.ChartCriteria;
 import org.fourthline.konto.shared.query.LineReportCriteria;
+import org.fourthline.konto.shared.result.ChartDataPoints;
 import org.fourthline.konto.shared.result.ReportLines;
 
 /**
@@ -22,4 +24,8 @@ public class MockReportServiceAsync implements ReportServiceAsync {
         async.onSuccess(svc.getReportLines(criteria));
     }
 
+    @Override
+    public void getChartDataPoints(ChartCriteria criteria, AsyncCallback<ChartDataPoints> async) {
+        async.onSuccess(svc.getChartDataPoints(criteria));
+    }
 }

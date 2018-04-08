@@ -24,7 +24,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.web.bindery.event.shared.EventBus;
-import org.fourthline.konto.client.ledger.event.AccountSelectionChange;
+import org.fourthline.konto.client.ledger.event.MultipleAccountsSelected;
 import org.fourthline.konto.client.ledger.event.AccountSelectionModeChange;
 import org.fourthline.konto.client.report.view.ReportResultView;
 import org.fourthline.konto.client.report.view.ReportSelectView;
@@ -35,7 +35,6 @@ import org.fourthline.konto.client.service.ReportServiceAsync;
 import org.fourthline.konto.client.settings.GlobalSettings;
 import org.fourthline.konto.client.settings.event.GlobalSettingsRefreshedEvent;
 import org.fourthline.konto.shared.AccountType;
-import org.fourthline.konto.shared.Constants;
 import org.fourthline.konto.shared.entity.MonetaryUnit;
 import org.fourthline.konto.shared.entity.settings.GlobalOption;
 import org.fourthline.konto.shared.query.LineReportCriteria;
@@ -62,7 +61,7 @@ public class ReportActivity extends AbstractActivity
         ReportView.Presenter,
         ReportSelectView.Presenter,
         ReportResultView.Presenter,
-        AccountSelectionChange.Handler,
+        MultipleAccountsSelected.Handler,
         GlobalSettingsRefreshedEvent.Handler {
 
     class InitCurrencyCodesCallback implements AsyncCallback<List<MonetaryUnit>> {
@@ -140,7 +139,7 @@ public class ReportActivity extends AbstractActivity
 
         containerWidget.setWidget(view.asWidget());
 
-        activityBus.addHandler(AccountSelectionChange.TYPE, this);
+        activityBus.addHandler(MultipleAccountsSelected.TYPE, this);
         activityBus.addHandler(GlobalSettingsRefreshedEvent.TYPE, this);
 
         // We store the account selection in our view because we have no direct
@@ -167,7 +166,7 @@ public class ReportActivity extends AbstractActivity
 
                     @Override
                     public void onSuccess(ReportLines[] result) {
-                        Map<AccountType, ReportLines> linesByType = new LinkedHashMap();
+                        Map<AccountType, ReportLines> linesByType = new LinkedHashMap<>();
                         for (ReportLines r : result) {
                             linesByType.put(r.getCriteria().getType(), r);
                         }
@@ -202,7 +201,7 @@ public class ReportActivity extends AbstractActivity
     }
 
     @Override
-    public void onReportTypeSelected(LineReportType type) {
+    public void onReportTypeSelected(ReportType type) {
         resetCriteria(type, false);
         goTo(new ReportPlace(criteria));
     }
@@ -221,7 +220,7 @@ public class ReportActivity extends AbstractActivity
     }
 
     @Override
-    public void onAccountSelectionChange(AccountSelectionChange event) {
+    public void onMultipleAccountsSelected(MultipleAccountsSelected event) {
         view.setAccountSelection(event.getSelection()); // Store it in the shared view
 
         criteria = new LineReportCriteria(
@@ -290,7 +289,7 @@ public class ReportActivity extends AbstractActivity
         placeController.goTo(place);
     }
 
-    protected void resetCriteria(LineReportType type, boolean useViewState) {
+    protected void resetCriteria(ReportType type, boolean useViewState) {
         // TODO: Ugh...
         // If the type didn't change we can preserve some existing criteria/view settings
         criteria = new LineReportCriteria(

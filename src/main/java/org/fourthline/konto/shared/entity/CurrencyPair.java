@@ -276,6 +276,14 @@ public class CurrencyPair implements Serializable, Validatable {
                 && getToCode().equals(that.getToCode()));
     }
 
+    public boolean equalsFromToCodes(MonetaryUnit fromUnit, MonetaryUnit toUnit) {
+        return equalsFromToCodes(fromUnit.getCurrencyCode(), toUnit.getCurrencyCode());
+    }
+
+    public boolean equalsFromToCodes(String fromCode, String toCode) {
+        return getFromCode().equals(fromCode) && getToCode().equals(toCode);
+    }
+
     public static List<CurrencyPair> getPairs(List<MonetaryUnit> monetaryUnits) {
 
         // Always sort the collection so result is guaranteed to be the same

@@ -25,6 +25,8 @@ import com.google.gwt.place.shared.PlaceHistoryMapper;
 import com.google.gwt.place.shared.WithTokenizers;
 import javax.inject.Inject;
 import com.google.inject.Provider;
+import org.fourthline.konto.client.chart.ChartActivity;
+import org.fourthline.konto.client.chart.ChartPlace;
 import org.fourthline.konto.client.currency.CurrencyActivity;
 import org.fourthline.konto.client.currency.CurrencyPlace;
 import org.fourthline.konto.client.dashboard.DashboardActivity;
@@ -75,10 +77,11 @@ public class NavigationMapper implements ActivityMapper {
                     AccountPlace.Tokenizer.class,
                     CurrencyPlace.Tokenizer.class,
                     ReportPlace.Tokenizer.class,
+                    ChartPlace.Tokenizer.class,
                     SettingsPlace.Tokenizer.class
             }
     )
-    static public interface History extends PlaceHistoryMapper {
+    public interface History extends PlaceHistoryMapper {
     }
 
     final MainPresenter mainPresenter;
@@ -87,6 +90,7 @@ public class NavigationMapper implements ActivityMapper {
     final Provider<AccountActivity> accountActivityProvider;
     final Provider<CurrencyActivity> currencyActivityProvider;
     final Provider<ReportActivity> reportActivityProvider;
+    final Provider<ChartActivity> chartActivityProvider;
     final Provider<SettingsActivity> settingsActivityProvider;
 
     @Inject
@@ -96,6 +100,7 @@ public class NavigationMapper implements ActivityMapper {
                             Provider<AccountActivity> accountActivityProvider,
                             Provider<CurrencyActivity> currencyActivityProvider,
                             Provider<ReportActivity> reportActivityProvider,
+                            Provider<ChartActivity> chartActivityProvider,
                             Provider<SettingsActivity> settingsActivityProvider,
                             EventBus bus,
                             Notifications notifications) {
@@ -106,6 +111,7 @@ public class NavigationMapper implements ActivityMapper {
         this.accountActivityProvider = accountActivityProvider;
         this.currencyActivityProvider = currencyActivityProvider;
         this.reportActivityProvider = reportActivityProvider;
+        this.chartActivityProvider= chartActivityProvider;
         this.settingsActivityProvider = settingsActivityProvider;
 
         bus.addHandler(NotifyEvent.TYPE, notifications);
@@ -124,6 +130,8 @@ public class NavigationMapper implements ActivityMapper {
             return currencyActivityProvider.get().init((CurrencyPlace) place);
         } else if (place instanceof ReportPlace) {
             return reportActivityProvider.get().init((ReportPlace) place);
+        } else if (place instanceof ChartPlace) {
+            return chartActivityProvider.get().init((ChartPlace) place);
         } else if (place instanceof SettingsPlace) {
             return settingsActivityProvider.get().init((SettingsPlace) place);
         }

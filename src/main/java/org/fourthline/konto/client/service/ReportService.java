@@ -19,12 +19,15 @@ package org.fourthline.konto.client.service;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import org.fourthline.konto.shared.query.ChartCriteria;
 import org.fourthline.konto.shared.query.LineReportCriteria;
+import org.fourthline.konto.shared.result.ChartDataPoints;
 import org.fourthline.konto.shared.result.ReportLines;
 
 @RemoteServiceRelativePath("report")
 public interface ReportService extends RemoteService {
 
     ReportLines[] getReportLines(LineReportCriteria criteria);
+    ChartDataPoints getChartDataPoints(ChartCriteria criteria);
 
 }

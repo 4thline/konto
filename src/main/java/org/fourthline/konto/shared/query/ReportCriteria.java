@@ -18,31 +18,21 @@
 package org.fourthline.konto.shared.query;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author Christian Bauer
  */
 public class ReportCriteria implements Serializable {
 
-    public enum GroupOption {
-        WEEK,
-        MONTH,
-        QUARTER,
-        YEAR
-    }
-
     protected AccountsQueryCriteria[] accountSelection;
     protected String currencyCode;
-    protected Date dayOfExchangeRate;
 
     public ReportCriteria() {
     }
 
-    public ReportCriteria(AccountsQueryCriteria[] accountSelection, String currencyCode, Date dayOfExchangeRate) {
+    public ReportCriteria(AccountsQueryCriteria[] accountSelection, String currencyCode) {
         this.accountSelection = accountSelection;
         this.currencyCode = currencyCode;
-        this.dayOfExchangeRate = dayOfExchangeRate;
     }
 
     public AccountsQueryCriteria[] getAccountSelection() {
@@ -59,14 +49,6 @@ public class ReportCriteria implements Serializable {
 
     public void setCurrencyCode(String currencyCode) {
         this.currencyCode = currencyCode;
-    }
-
-    public Date getDayOfExchangeRate() {
-        return dayOfExchangeRate;
-    }
-
-    public void setDayOfExchangeRate(Date dayOfExchangeRate) {
-        this.dayOfExchangeRate = dayOfExchangeRate;
     }
 
 }

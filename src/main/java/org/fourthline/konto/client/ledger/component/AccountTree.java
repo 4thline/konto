@@ -103,6 +103,11 @@ public class AccountTree extends UsableTree {
     }
 
     @Override
+    public void setFocus(boolean focus) {
+        // TODO https://github.com/gwtproject/gwt/issues/9475
+    }
+
+    @Override
     public void clear() {
         super.clear();
         // This is where the tree "model" is created

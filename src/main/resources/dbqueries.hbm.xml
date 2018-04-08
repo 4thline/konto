@@ -37,8 +37,7 @@
             ACCT asc;
     </sql-query>
 
-    <!-- TODO: Unused but basically ready for time-series graphs -->
-    <sql-query name="sumOfAccountsByMonth">
+    <sql-query name="sumOfAccountByMonth">
         <return-scalar column="ACCT_ID" type="long"/>
         <return-scalar column="YEAR" type="integer"/>
         <return-scalar column="MONTH" type="integer"/>
@@ -57,7 +56,7 @@
              from
                 SPLIT s inner join ENTRY e on s.ENTRY_ID = e.ENTRY_ID
              where
-                s.ACCOUNT_ID in (:ids)
+                s.ACCOUNT_ID =:id
                     and e.EFFECTIVE_ON >= :rangeStart and e.EFFECTIVE_ON &lt;= :rangeEnd
              group by
                 s.ACCOUNT_ID, Y, M
@@ -70,7 +69,7 @@
              from
                 SPLIT s inner join ENTRY e on s.ENTRY_ID = e.ENTRY_ID
              where
-                e.ACCOUNT_ID in (:ids)
+                e.ACCOUNT_ID = :id
                     and e.EFFECTIVE_ON >= :rangeStart and e.EFFECTIVE_ON &lt;= :rangeEnd
              group by
                 e.ACCOUNT_ID, Y, M)
@@ -78,6 +77,46 @@
             ACCT, Y, M
         order by
             ACCT, Y, M asc;
+    </sql-query>
+
+    <sql-query name="sumOfAccountByYear">
+        <return-scalar column="ACCT_ID" type="long"/>
+        <return-scalar column="YEAR" type="integer"/>
+        <return-scalar column="MONTH" type="integer"/>
+        <return-scalar column="SUM_AMT" type="big_decimal"/>
+        select
+            ACCT as ACCT_ID,
+            Y as YEAR,
+            12 as MONTH,
+            sum(AMT) as SUM_AMT
+        from
+            (select
+                s.ACCOUNT_ID as ACCT,
+                extract(year from e.EFFECTIVE_ON) as Y,
+                sum(s.AMOUNT) as AMT
+             from
+                SPLIT s inner join ENTRY e on s.ENTRY_ID = e.ENTRY_ID
+             where
+                s.ACCOUNT_ID =:id
+                    and e.EFFECTIVE_ON >= :rangeStart and e.EFFECTIVE_ON &lt;= :rangeEnd
+             group by
+                s.ACCOUNT_ID, Y
+             union
+             select
+                e.ACCOUNT_ID as ACCT,
+                extract(year from e.EFFECTIVE_ON) as Y,
+                sum(s.ENTRY_AMOUNT) as AMT
+             from
+                SPLIT s inner join ENTRY e on s.ENTRY_ID = e.ENTRY_ID
+             where
+                e.ACCOUNT_ID = :id
+                    and e.EFFECTIVE_ON >= :rangeStart and e.EFFECTIVE_ON &lt;= :rangeEnd
+             group by
+                e.ACCOUNT_ID, Y)
+        group by
+            ACCT, Y
+        order by
+            ACCT, Y asc;
     </sql-query>
 
     <sql-query name="cashflowOfAccounts">

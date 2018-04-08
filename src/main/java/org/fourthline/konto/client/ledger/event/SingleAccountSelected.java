@@ -19,26 +19,26 @@ package org.fourthline.konto.client.ledger.event;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.web.bindery.event.shared.Event;
-import org.fourthline.konto.shared.query.AccountsQueryCriteria;
+import org.fourthline.konto.shared.entity.Account;
 
 /**
  * @author Christian Bauer
  */
-public class AccountSelectionChange extends Event<AccountSelectionChange.Handler> {
+public class SingleAccountSelected extends Event<SingleAccountSelected.Handler> {
 
-    public static Type<Handler> TYPE = new Type<Handler>();
+    public static Type<Handler> TYPE = new Type<>();
 
     public interface Handler extends EventHandler {
-        public void onAccountSelectionChange(AccountSelectionChange event);
+        void onSingleAccountSelected(SingleAccountSelected event);
     }
 
-    AccountsQueryCriteria[] selection;
+    Account selection;
 
-    public AccountSelectionChange(AccountsQueryCriteria[] selection) {
+    public SingleAccountSelected(Account selection) {
         this.selection = selection;
     }
 
-    public AccountsQueryCriteria[] getSelection() {
+    public Account getSelection() {
         return selection;
     }
 
@@ -49,6 +49,6 @@ public class AccountSelectionChange extends Event<AccountSelectionChange.Handler
 
     @Override
     protected void dispatch(Handler handler) {
-        handler.onAccountSelectionChange(this);
+        handler.onSingleAccountSelected(this);
     }
 }

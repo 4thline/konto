@@ -100,16 +100,18 @@ public class GlobalSettings {
 
         // Update the cache
         boolean sameValue = false;
-        for (GlobalOption cachedOption : getSettings()) {
-            if (cachedOption.getName().equals(option.getName())) {
-                if (cachedOption.isEqualValue(option)) {
-                    log.finest("New Option value equal to cached value, skipping storage on server");
-                    sameValue = true;
-                    break;
-                } else {
-                    log.finest("Updating outdated cached value: " + cachedOption);
-                    cachedOption.setValue(option.getValue());
-                    break;
+        if (getSettings() != null) {
+            for (GlobalOption cachedOption : getSettings()) {
+                if (cachedOption.getName().equals(option.getName())) {
+                    if (cachedOption.isEqualValue(option)) {
+                        log.finest("New Option value equal to cached value, skipping storage on server");
+                        sameValue = true;
+                        break;
+                    } else {
+                        log.finest("Updating outdated cached value: " + cachedOption);
+                        cachedOption.setValue(option.getValue());
+                        break;
+                    }
                 }
             }
         }

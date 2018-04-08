@@ -26,12 +26,7 @@ import org.fourthline.konto.shared.entity.MonetaryUnit;
 import org.fourthline.konto.shared.query.AccountsQueryCriteria;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Christian Bauer
@@ -127,7 +122,7 @@ public class ReportLines extends ArrayList<GroupReportLine> {
                                                                boolean useInitialBalance) {
 
         // Build and populate account lines
-        Map<Long, AccountReportLine> accountLines = new LinkedHashMap();
+        Map<Long, AccountReportLine> accountLines = new LinkedHashMap<>();
 
         for (Map.Entry<Account, List<EntryReportLine>> me : accountEntryLines.entrySet()) {
 
@@ -151,7 +146,7 @@ public class ReportLines extends ArrayList<GroupReportLine> {
     }
 
     protected Collection<GroupReportLine> createGroupLines(Collection<AccountReportLine> accountLines) {
-        Map<GroupIdName, GroupReportLine> groupLines = new LinkedHashMap();
+        Map<GroupIdName, GroupReportLine> groupLines = new LinkedHashMap<>();
 
         for (AccountReportLine accountLine : accountLines) {
 

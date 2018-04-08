@@ -21,9 +21,12 @@ import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import org.fourthline.konto.client.ledger.LedgerPlace;
 import org.fourthline.konto.client.ledger.event.AccountSelectionModeChange;
+import org.fourthline.konto.client.ledger.event.SingleAccountSelected;
 import org.fourthline.konto.client.settings.event.GlobalSettingsRefreshedEvent;
 import org.fourthline.konto.client.settings.view.SettingsView;
+import org.fourthline.konto.shared.LedgerCoordinates;
 import org.seamless.util.time.DateFormat;
 import org.fourthline.konto.shared.entity.settings.GlobalOption;
 import org.fourthline.konto.shared.entity.settings.Settings;
@@ -31,9 +34,10 @@ import org.fourthline.konto.shared.entity.settings.Settings;
 import javax.inject.Inject;
 
 public class SettingsActivity extends AbstractActivity
-        implements
-        SettingsView.Presenter,
-        GlobalSettingsRefreshedEvent.Handler {
+    implements
+    SettingsView.Presenter,
+    SingleAccountSelected.Handler,
+    GlobalSettingsRefreshedEvent.Handler {
 
     final SettingsView view;
     final PlaceController placeController;
@@ -64,6 +68,7 @@ public class SettingsActivity extends AbstractActivity
 
         containerWidget.setWidget(view.asWidget());
 
+        activityBus.addHandler(SingleAccountSelected.TYPE, this);
         activityBus.addHandler(GlobalSettingsRefreshedEvent.TYPE, this);
 
         bus.fireEvent(new AccountSelectionModeChange());
@@ -82,12 +87,16 @@ public class SettingsActivity extends AbstractActivity
     public void save() {
 
         Settings settings = new Settings(
-                new GlobalOption<DateFormat>(GlobalOption.OPT_DATE_FORMAT, view.getDateFormatProperty().get()),
-                new GlobalOption<Boolean>(GlobalOption.OPT_NEW_ENTRY_SELECT_DAY, view.getNewEntrySelectDayProperty().get()),
-                new GlobalOption<Boolean>(GlobalOption.OPT_ROUND_FRACTIONS_IN_REPORTS, view.getRoundFractionsInReportsProperty().get())
+            new GlobalOption<DateFormat>(GlobalOption.OPT_DATE_FORMAT, view.getDateFormatProperty().get()),
+            new GlobalOption<Boolean>(GlobalOption.OPT_NEW_ENTRY_SELECT_DAY, view.getNewEntrySelectDayProperty().get()),
+            new GlobalOption<Boolean>(GlobalOption.OPT_ROUND_FRACTIONS_IN_REPORTS, view.getRoundFractionsInReportsProperty().get())
         );
 
         globalSettings.store(settings);
     }
 
+    @Override
+    public void onSingleAccountSelected(SingleAccountSelected event) {
+        placeController.goTo(new LedgerPlace(new LedgerCoordinates(event.getSelection().getId())));
+    }
 }

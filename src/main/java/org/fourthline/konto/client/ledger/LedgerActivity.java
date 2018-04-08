@@ -18,12 +18,13 @@
 package org.fourthline.konto.client.ledger;
 
 import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Provider;
+import com.google.web.bindery.event.shared.EventBus;
+import org.fourthline.konto.client.chart.ChartPlace;
 import org.fourthline.konto.client.dashboard.DashboardPlace;
 import org.fourthline.konto.client.ledger.entry.event.EntryEditCanceled;
 import org.fourthline.konto.client.ledger.entry.event.EntryEditStarted;
@@ -31,21 +32,23 @@ import org.fourthline.konto.client.ledger.entry.event.EntryModified;
 import org.fourthline.konto.client.ledger.entry.event.EntryRemoved;
 import org.fourthline.konto.client.ledger.entry.view.EntryView;
 import org.fourthline.konto.client.ledger.event.AccountSelectionModeChange;
+import org.fourthline.konto.client.ledger.event.SingleAccountSelected;
 import org.fourthline.konto.client.ledger.view.LedgerView;
-import org.seamless.gwt.notify.client.Message;
-import org.seamless.gwt.notify.client.ServerFailureNotifyEvent;
-import org.seamless.gwt.notify.client.NotifyEvent;
 import org.fourthline.konto.client.service.LedgerServiceAsync;
 import org.fourthline.konto.client.settings.GlobalSettings;
 import org.fourthline.konto.client.settings.event.GlobalSettingsRefreshedEvent;
-import org.seamless.util.time.DateRange;
 import org.fourthline.konto.shared.LedgerCoordinates;
 import org.fourthline.konto.shared.LedgerEntry;
 import org.fourthline.konto.shared.entity.Entry;
 import org.fourthline.konto.shared.entity.settings.GlobalOption;
+import org.fourthline.konto.shared.query.ChartCriteria;
 import org.fourthline.konto.shared.query.LedgerLinesQueryCriteria;
 import org.fourthline.konto.shared.result.LedgerLine;
 import org.fourthline.konto.shared.result.LedgerLines;
+import org.seamless.gwt.notify.client.Message;
+import org.seamless.gwt.notify.client.NotifyEvent;
+import org.seamless.gwt.notify.client.ServerFailureNotifyEvent;
+import org.seamless.util.time.DateRange;
 
 import javax.inject.Inject;
 import java.util.Date;
@@ -55,12 +58,13 @@ import java.util.logging.Level;
  * @author Christian Bauer
  */
 public class LedgerActivity extends AbstractActivity implements
-        LedgerView.Presenter,
-        GlobalSettingsRefreshedEvent.Handler,
-        EntryEditStarted.Handler,
-        EntryEditCanceled.Handler,
-        EntryModified.Handler,
-        EntryRemoved.Handler {
+    LedgerView.Presenter,
+    SingleAccountSelected.Handler,
+    GlobalSettingsRefreshedEvent.Handler,
+    EntryEditStarted.Handler,
+    EntryEditCanceled.Handler,
+    EntryModified.Handler,
+    EntryRemoved.Handler {
 
     final LedgerView view;
     final PlaceController placeController;
@@ -101,6 +105,7 @@ public class LedgerActivity extends AbstractActivity implements
     public void start(AcceptsOneWidget containerWidget, com.google.gwt.event.shared.EventBus activityBus) {
         view.setPresenter(this);
 
+        activityBus.addHandler(SingleAccountSelected.TYPE, this);
         activityBus.addHandler(GlobalSettingsRefreshedEvent.TYPE, this);
         activityBus.addHandler(EntryEditStarted.TYPE, this);
         activityBus.addHandler(EntryEditCanceled.TYPE, this);
@@ -153,7 +158,7 @@ public class LedgerActivity extends AbstractActivity implements
         // If this was a filtered ledger view, we might not have loaded all the
         // splits of an entry, so load them now if necessary
         if (ledgerEntry != null && ledgerEntry instanceof Entry
-                && descriptionFilter != null && descriptionFilter.length() > 0) {
+            && descriptionFilter != null && descriptionFilter.length() > 0) {
             ledgerService.populateSplits((Entry) ledgerEntry, new AsyncCallback<Entry>() {
                 @Override
                 public void onFailure(Throwable caught) {
@@ -173,8 +178,8 @@ public class LedgerActivity extends AbstractActivity implements
     @Override
     public void filterEffectiveOn(DateRange dateRange) {
         if ((effectiveOnFilter == null && dateRange != null) ||
-                (effectiveOnFilter != null && dateRange == null) ||
-                (effectiveOnFilter != null && !effectiveOnFilter.equals(dateRange))) {
+            (effectiveOnFilter != null && dateRange == null) ||
+            (effectiveOnFilter != null && !effectiveOnFilter.equals(dateRange))) {
             effectiveOnFilter = dateRange;
             loadLedgerLines(false);
         } else {
@@ -186,8 +191,8 @@ public class LedgerActivity extends AbstractActivity implements
     @Override
     public void filterDescription(String filter) {
         if ((descriptionFilter == null && filter != null) ||
-                (descriptionFilter != null && filter == null) ||
-                (descriptionFilter != null && !descriptionFilter.equals(filter))) {
+            (descriptionFilter != null && filter == null) ||
+            (descriptionFilter != null && !descriptionFilter.equals(filter))) {
             this.descriptionFilter = filter;
             loadLedgerLines(false);
         } else {
@@ -198,7 +203,7 @@ public class LedgerActivity extends AbstractActivity implements
     @Override
     public void onEntryModified(EntryModified event) {
         bus.fireEvent(new NotifyEvent(
-                new Message("Entry saved", "Modifications have been stored in the ledger.")
+            new Message("Entry saved", "Modifications have been stored in the ledger.")
         ));
         hideEntryEditContainer();
         loadLedgerLines(true);
@@ -207,7 +212,7 @@ public class LedgerActivity extends AbstractActivity implements
     @Override
     public void onEntryRemoved(EntryRemoved event) {
         bus.fireEvent(new NotifyEvent(
-                new Message("Entry removed", "The entry has been permanently removed from the ledger.")
+            new Message("Entry removed", "The entry has been permanently removed from the ledger.")
         ));
         hideEntryEditContainer();
         loadLedgerLines(true);
@@ -232,6 +237,16 @@ public class LedgerActivity extends AbstractActivity implements
         placeController.goTo(place);
     }
 
+    @Override
+    public void showChart() {
+        goTo(new ChartPlace(new ChartCriteria(coordinates.getAccountId(), effectiveOnFilter, ChartCriteria.GroupOption.MONTHLY)));
+    }
+
+    @Override
+    public void onSingleAccountSelected(SingleAccountSelected event) {
+        goTo(new LedgerPlace(new LedgerCoordinates(event.getSelection().getId())));
+    }
+
     protected void hideEntryEditContainer() {
         view.hideEntryEditContainer();
         view.getEntryEditContainer().setWidget(null);
@@ -243,7 +258,7 @@ public class LedgerActivity extends AbstractActivity implements
             return new Date();
         long currentTime = new Date().getTime();
         for (LedgerLine line : lines) {
-            if (line.getDate().getTime()  < currentTime)
+            if (line.getDate().getTime() < currentTime)
                 return line.getDate();
         }
         return lines.get(0).getDate();
@@ -256,40 +271,40 @@ public class LedgerActivity extends AbstractActivity implements
     protected void loadLedgerLines(final AcceptsOneWidget container,
                                    final boolean init, final Long selectEntryId, final Long selectSplitId) {
         ledgerService.getLedgerLines(
-                new LedgerLinesQueryCriteria(descriptionFilter, true, coordinates.getAccountId(), effectiveOnFilter, selectEntryId),
-                new AsyncCallback<LedgerLines>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        bus.fireEvent(new ServerFailureNotifyEvent(caught));
-                    }
+            new LedgerLinesQueryCriteria(descriptionFilter, true, coordinates.getAccountId(), effectiveOnFilter, selectEntryId),
+            new AsyncCallback<LedgerLines>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    bus.fireEvent(new ServerFailureNotifyEvent(caught));
+                }
 
-                    @Override
-                    public void onSuccess(LedgerLines result) {
-                        bus.fireEvent(new NotifyEvent());
+                @Override
+                public void onSuccess(LedgerLines result) {
+                    bus.fireEvent(new NotifyEvent());
 
-                        if (result != null) {
-                            if (container != null)
-                                container.setWidget(view.asWidget());
+                    if (result != null) {
+                        if (container != null)
+                            container.setWidget(view.asWidget());
 
-                            view.setLedgerLines(result, selectEntryId, selectSplitId);
-                            if (init) {
-                                LedgerActivity.this.lines = result;
-                                LedgerActivity.this.effectiveOnFilter = result.getEffectiveOn();
-                                view.hideEntryEditContainer();
-                                view.focus();
-                            }
-                        } else {
-                            bus.fireEvent(new NotifyEvent(
-                                    new Message(
-                                            Level.WARNING,
-                                            "Account or entry has been removed",
-                                            "You have been redirected to the dashboard."
-                                    )
-                            ));
-                            placeController.goTo(new DashboardPlace());
+                        view.setLedgerLines(result, selectEntryId, selectSplitId);
+                        if (init) {
+                            LedgerActivity.this.lines = result;
+                            LedgerActivity.this.effectiveOnFilter = result.getEffectiveOn();
+                            view.hideEntryEditContainer();
+                            view.focus();
                         }
+                    } else {
+                        bus.fireEvent(new NotifyEvent(
+                            new Message(
+                                Level.WARNING,
+                                "Account or entry has been removed",
+                                "You have been redirected to the dashboard."
+                            )
+                        ));
+                        placeController.goTo(new DashboardPlace());
                     }
                 }
+            }
         );
     }
 

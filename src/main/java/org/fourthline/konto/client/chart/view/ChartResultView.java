@@ -15,17 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.fourthline.konto.client.service;
+package org.fourthline.konto.client.chart.view;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.fourthline.konto.shared.query.ChartCriteria;
-import org.fourthline.konto.shared.query.LineReportCriteria;
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.UIObject;
 import org.fourthline.konto.shared.result.ChartDataPoints;
-import org.fourthline.konto.shared.result.ReportLines;
+import org.seamless.util.time.DateFormat;
 
-public interface ReportServiceAsync {
+/**
+ * @author Christian Bauer
+ */
+public interface ChartResultView extends IsWidget {
 
-    void getReportLines(LineReportCriteria criteria, AsyncCallback<ReportLines[]> async);
+    interface Style extends CssResource {
+        String chartPanel();
+    }
 
-    void getChartDataPoints(ChartCriteria criteria, AsyncCallback<ChartDataPoints> async);
+    interface Presenter {
+        void goTo(Place place);
+    }
+
+    void setPresenter(Presenter presenter);
+
+    void setDateFormat(DateFormat dateFormat);
+
+    void setRoundFractions(Boolean visible);
+
+    void setDataPoints(ChartDataPoints dataPoints);
+
+    Style getPrintStyle();
+
+    UIObject getPrintObject();
 }

@@ -17,20 +17,19 @@
 
 package org.fourthline.konto.client.ledger.component;
 
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.seamless.gwt.component.client.AbstractEventListeningPresenter;
-import org.fourthline.konto.client.ledger.LedgerPlace;
+import com.google.web.bindery.event.shared.EventBus;
 import org.fourthline.konto.client.ledger.account.AccountPlace;
 import org.fourthline.konto.client.ledger.account.event.AccountModified;
 import org.fourthline.konto.client.ledger.account.event.AccountRemoved;
-import org.fourthline.konto.client.ledger.event.AccountSelectionChange;
-import org.seamless.gwt.notify.client.ServerFailureNotifyEvent;
+import org.fourthline.konto.client.ledger.event.MultipleAccountsSelected;
+import org.fourthline.konto.client.ledger.event.SingleAccountSelected;
 import org.fourthline.konto.client.service.LedgerServiceAsync;
-import org.fourthline.konto.shared.LedgerCoordinates;
 import org.fourthline.konto.shared.entity.Account;
 import org.fourthline.konto.shared.query.AccountsQueryCriteria;
+import org.seamless.gwt.component.client.AbstractEventListeningPresenter;
+import org.seamless.gwt.notify.client.ServerFailureNotifyEvent;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -110,14 +109,12 @@ public class AccountTreeSelectPresenter
 
     @Override
     public void onSingleSelectionChange(Account selectedAccount) {
-        placeController.goTo(
-                new LedgerPlace(new LedgerCoordinates(selectedAccount.getId()))
-        );
+        bus.fireEvent(new SingleAccountSelected(selectedAccount));
     }
 
     @Override
     public void onMultiSelectionChange(AccountsQueryCriteria[] selection) {
-        bus.fireEvent(new AccountSelectionChange(selection));
+        bus.fireEvent(new MultipleAccountsSelected(selection));
     }
 
     @Override

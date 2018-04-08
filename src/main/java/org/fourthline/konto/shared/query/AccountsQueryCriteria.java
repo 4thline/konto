@@ -21,6 +21,7 @@ import org.fourthline.konto.shared.AccountType;
 import org.seamless.gwt.validation.shared.EntityProperty;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,6 +44,11 @@ public class AccountsQueryCriteria extends QueryCriteria {
 
     public AccountsQueryCriteria(List<Long> listOfIdentifiers, AccountType type) {
         super(listOfIdentifiers);
+        this.type = type;
+    }
+
+    public AccountsQueryCriteria(Long... listOfIdentifiers) {
+        super(Arrays.asList(listOfIdentifiers));
         this.type = type;
     }
 
@@ -82,8 +88,8 @@ public class AccountsQueryCriteria extends QueryCriteria {
     }
 
     public static AccountsQueryCriteria[] valueOf(String s) {
-        List<AccountsQueryCriteria> list = new ArrayList();
-        while (s.indexOf(STRING_REPRESENTATION_PREFIX) != -1) {
+        List<AccountsQueryCriteria> list = new ArrayList<>();
+        while (s.contains(STRING_REPRESENTATION_PREFIX)) {
             try {
                 s = s.substring(s.indexOf(STRING_REPRESENTATION_PREFIX) + STRING_REPRESENTATION_PREFIX.length());
                 String as = s.substring(0, s.indexOf(";"));
@@ -92,7 +98,7 @@ public class AccountsQueryCriteria extends QueryCriteria {
                 AccountType accountType = AccountType.valueOf(at);
 
                 String[] ids = as.substring(as.indexOf("=") + 1).split(",");
-                List<Long> identifiers = new ArrayList();
+                List<Long> identifiers = new ArrayList<>();
                 for (String id : ids) {
                     if (id.length() > 0)
                         identifiers.add(Long.valueOf(id));

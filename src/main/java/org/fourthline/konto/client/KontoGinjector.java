@@ -22,6 +22,7 @@ import com.google.gwt.inject.client.Ginjector;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.web.bindery.event.shared.EventBus;
 import org.fourthline.konto.client.bundle.Bundle;
+import org.fourthline.konto.client.chart.ChartModule;
 import org.fourthline.konto.client.currency.CurrencyModule;
 import org.fourthline.konto.client.dashboard.DashboardModule;
 import org.fourthline.konto.client.ledger.LedgerModule;
@@ -40,7 +41,8 @@ import org.seamless.gwt.notify.client.NotifyModule;
         DashboardModule.class,
         CurrencyModule.class,
         LedgerModule.class,
-        ReportModule.class
+        ReportModule.class,
+        ChartModule.class
     }
 )
 public interface KontoGinjector extends Ginjector {

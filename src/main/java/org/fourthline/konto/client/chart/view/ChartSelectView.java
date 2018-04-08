@@ -15,17 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.fourthline.konto.client.service;
+package org.fourthline.konto.client.chart.view;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.IsWidget;
 import org.fourthline.konto.shared.query.ChartCriteria;
-import org.fourthline.konto.shared.query.LineReportCriteria;
-import org.fourthline.konto.shared.result.ChartDataPoints;
-import org.fourthline.konto.shared.result.ReportLines;
+import org.seamless.util.time.DateFormat;
+import org.seamless.util.time.DateRange;
 
-public interface ReportServiceAsync {
+/**
+ * @author Christian Bauer
+ */
+public interface ChartSelectView extends IsWidget {
 
-    void getReportLines(LineReportCriteria criteria, AsyncCallback<ReportLines[]> async);
+    interface Presenter {
 
-    void getChartDataPoints(ChartCriteria criteria, AsyncCallback<ChartDataPoints> async);
+        void onDateRangeUpdated(DateRange dateRange);
+
+        void onGroupOptionSelected(ChartCriteria.GroupOption groupOption);
+
+        void showLedger();
+    }
+
+    void setPresenter(Presenter presenter);
+
+    void setDateFormat(DateFormat dateFormat);
+
+    void setCriteria(ChartCriteria criteria);
+
+    DateRange getDateRange();
 }

@@ -30,6 +30,7 @@ import org.fourthline.konto.client.ledger.account.event.AccountModified;
 import org.fourthline.konto.client.ledger.account.event.AccountRemoved;
 import org.fourthline.konto.client.ledger.account.view.AccountView;
 import org.fourthline.konto.client.ledger.event.AccountSelectionModeChange;
+import org.fourthline.konto.client.ledger.event.SingleAccountSelected;
 import org.seamless.gwt.notify.client.Message;
 import org.seamless.gwt.notify.client.ServerFailureNotifyEvent;
 import org.seamless.gwt.notify.client.NotifyEvent;
@@ -60,8 +61,11 @@ import java.util.logging.Level;
  * @author Christian Bauer
  */
 public class AccountActivity
-        extends AbstractActivity
-        implements AccountView.Presenter, GlobalSettingsRefreshedEvent.Handler {
+    extends AbstractActivity
+    implements
+    AccountView.Presenter,
+    SingleAccountSelected.Handler,
+    GlobalSettingsRefreshedEvent.Handler {
 
     class NewAccountCallback implements AsyncCallback<List<MonetaryUnit>> {
         @Override
@@ -76,11 +80,11 @@ public class AccountActivity
             if (currencies.size() == 0) {
 
                 bus.fireEvent(new NotifyEvent(
-                        new Message(
-                                Level.INFO,
-                                "Can't create account",
-                                "Create a currency first."
-                        )
+                    new Message(
+                        Level.INFO,
+                        "Can't create account",
+                        "Create a currency first."
+                    )
                 ));
                 placeController.goTo(new CurrencyPlace());
                 return;
@@ -167,7 +171,7 @@ public class AccountActivity
         this.currencyService = currencyService;
 
         accountGroupSelectPresenter =
-                new AccountGroupSelectPresenter(view.getAccountGroupSelectView(), bus, ledgerService);
+            new AccountGroupSelectPresenter(view.getAccountGroupSelectView(), bus, ledgerService);
 
         onSettingsRefreshed(globalSettings);
     }
@@ -188,6 +192,7 @@ public class AccountActivity
 
         containerWidget.setWidget(view.asWidget());
 
+        activityBus.addHandler(SingleAccountSelected.TYPE, this);
         activityBus.addHandler(GlobalSettingsRefreshedEvent.TYPE, this);
 
         bus.fireEvent(new AccountSelectionModeChange());
@@ -225,7 +230,7 @@ public class AccountActivity
         List<ValidationError> errors = flushView();
         if (errors.size() > 0) {
             bus.fireEvent(new NotifyEvent(
-                    new Message(Level.WARNING, "Can't save account", "Please correct your input.")
+                new Message(Level.WARNING, "Can't save account", "Please correct your input.")
             ));
             showValidationErrors(errors);
             return;
@@ -240,11 +245,11 @@ public class AccountActivity
                     // This is probably a FK violation
                     if (!ex.hasErrors()) {
                         bus.fireEvent(new NotifyEvent(
-                                new Message(
-                                        Level.WARNING,
-                                        "Can't save account, errors on server",
-                                        ex.getMessage()
-                                )
+                            new Message(
+                                Level.WARNING,
+                                "Can't save account, errors on server",
+                                ex.getMessage()
+                            )
                         ));
                     }
 
@@ -257,11 +262,11 @@ public class AccountActivity
             @Override
             public void onSuccess(Long result) {
                 bus.fireEvent(new NotifyEvent(
-                        new Message(
-                                Level.INFO,
-                                "Account saved",
-                                "Modifications have been stored."
-                        )
+                    new Message(
+                        Level.INFO,
+                        "Account saved",
+                        "Modifications have been stored."
+                    )
                 ));
                 placeController.goTo(new LedgerPlace(new LedgerCoordinates(result)));
                 bus.fireEvent(new AccountModified(account));
@@ -280,11 +285,11 @@ public class AccountActivity
             @Override
             public void onSuccess(Void result) {
                 bus.fireEvent(new NotifyEvent(
-                        new Message(
-                                Level.INFO,
-                                "Account deleted",
-                                "The account has been permanently removed."
-                        )
+                    new Message(
+                        Level.INFO,
+                        "Account deleted",
+                        "The account has been permanently removed."
+                    )
                 ));
                 placeController.goTo(new DashboardPlace());
                 bus.fireEvent(new AccountRemoved(initialAccount));
@@ -299,6 +304,11 @@ public class AccountActivity
         } else {
             placeController.goTo(new DashboardPlace());
         }
+    }
+
+    @Override
+    public void onSingleAccountSelected(SingleAccountSelected event) {
+        placeController.goTo(new LedgerPlace(new LedgerCoordinates(event.getSelection().getId())));
     }
 
     protected void switchSubAccountPresenter(AccountType type) {
@@ -332,7 +342,7 @@ public class AccountActivity
         }
 
         List<ValidationError> accountErrors =
-                ValidationError.filterEntity(errors, Account.class.getName());
+            ValidationError.filterEntity(errors, Account.class.getName());
 
         for (ValidationError error : accountErrors) {
             if (Account.Property.name.equals(error.getProperty()))

@@ -1,0 +1,57 @@
+<!--
+  ~ Copyright (C) 2011 4th Line GmbH, Switzerland
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:w="urn:import:org.seamless.gwt.component.client.widget">
+
+    <ui:with field="bundle" type="org.fourthline.konto.client.bundle.Bundle"/>
+    <ui:with field="themeBundle" type="org.seamless.gwt.theme.shared.client.ThemeBundle"/>
+    <ui:with field="themeStyle" type="org.seamless.gwt.theme.shared.client.ThemeStyle"/>
+
+    <ui:style type="org.fourthline.konto.client.chart.view.ChartSelectViewImpl.Style">
+    </ui:style>
+
+    <g:DockLayoutPanel unit="EM">
+        <g:center>
+            <g:HTMLPanel addStyleNames="{themeStyle.ToolbarContainer}">
+
+                <table cellpadding="0" cellspacing="0" border="0" style="min-height: 3em;">
+                    <tr>
+                        <td class="{themeStyle.ToolbarCell}" align="left">
+                            <w:DateRangeSelect ui:field="dateRangeSelect"/>
+                        </td>
+                        <td class="{themeStyle.ToolbarCell}" align="left">
+                            <g:ListBox ui:field="groupOptionListBox"
+                                       addStyleNames="{themeStyle.FormField}"
+                                       multipleSelect="false"/>
+
+                        </td>
+                        <td class="{themeStyle.ToolbarCell}" align="right" width="100%">
+                            <w:ImageTextButton addStyleNames="{themeStyle.ToolbarButtonSmall}"
+                                               ui:field="showLedgerButton"
+                                               text="Show Ledger"
+                                               imageResource="{themeBundle.icon16.info}"/>
+                        </td>
+                    </tr>
+                </table>
+
+            </g:HTMLPanel>
+        </g:center>
+    </g:DockLayoutPanel>
+
+</ui:UiBinder>

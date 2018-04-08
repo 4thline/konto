@@ -61,7 +61,7 @@ public class MainPresenter implements MainView.Presenter, GlobalSettingsRefreshe
     @Override
     public void sidebarResized(int width) {
         globalSettings.storeBackground(
-                new GlobalOption<Integer>(GlobalOption.OPT_SIDEBAR_WIDTH, width),
+                new GlobalOption<>(GlobalOption.OPT_SIDEBAR_WIDTH, width),
                 500
         );
     }

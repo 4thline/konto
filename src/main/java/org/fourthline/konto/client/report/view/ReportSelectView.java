@@ -18,7 +18,7 @@
 package org.fourthline.konto.client.report.view;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.fourthline.konto.client.report.LineReportType;
+import org.fourthline.konto.client.report.ReportType;
 import org.seamless.util.time.DateFormat;
 import org.seamless.util.time.DateRange;
 import org.fourthline.konto.shared.query.LineReportCriteria;
@@ -30,7 +30,7 @@ import org.fourthline.konto.shared.query.LineReportOption;
 public interface ReportSelectView extends IsWidget {
 
     public interface Presenter {
-        void onReportTypeSelected(LineReportType type);
+        void onReportTypeSelected(ReportType type);
 
         void onDateRangeUpdated(DateRange dateRange);
 
@@ -69,9 +69,9 @@ public interface ReportSelectView extends IsWidget {
 
     void setCriteria(LineReportCriteria criteria);
 
-    LineReportType getReportType();
+    ReportType getReportType();
 
-    DateRange getDateRange(LineReportType type);
+    DateRange getDateRange(ReportType type);
 
     void setCurrencyCodes(String[] currencyCodes, String selectedCurrencyCode);
 

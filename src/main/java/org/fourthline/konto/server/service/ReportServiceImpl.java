@@ -18,17 +18,16 @@
 package org.fourthline.konto.server.service;
 
 import org.fourthline.konto.client.service.ReportService;
-import org.seamless.gwt.server.HibernateRemoteServiceServlet;
 import org.fourthline.konto.server.dao.AccountDAO;
 import org.fourthline.konto.server.dao.CurrencyDAO;
 import org.fourthline.konto.server.dao.EntryDAO;
 import org.fourthline.konto.shared.entity.Account;
 import org.fourthline.konto.shared.entity.MonetaryUnit;
 import org.fourthline.konto.shared.query.AccountsQueryCriteria;
+import org.fourthline.konto.shared.query.ChartCriteria;
 import org.fourthline.konto.shared.query.LineReportCriteria;
-import org.fourthline.konto.shared.result.AccountReportLine;
-import org.fourthline.konto.shared.result.EntryReportLine;
-import org.fourthline.konto.shared.result.ReportLines;
+import org.fourthline.konto.shared.result.*;
+import org.seamless.gwt.server.HibernateRemoteServiceServlet;
 
 import java.util.List;
 import java.util.Map;
@@ -59,33 +58,57 @@ public class ReportServiceImpl extends HibernateRemoteServiceServlet implements 
 
             if (reportCriteria.getOptions().isEntryDetails()) {
                 Map<Account, List<EntryReportLine>> lines =
-                        entryDAO.getEntryReportLines(accounts, reportCriteria.getRange());
+                    entryDAO.getEntryReportLines(accounts, reportCriteria.getRange());
                 linesArray[i] = new ReportLines(
-                        ac,
-                        monetaryUnit,
-                        lines,
-                        reportCriteria.getType().useInitialBalance(reportCriteria),
-                        new DefaultCurrencyProvider(currencyDAO),
-                        reportCriteria.getDayOfExchangeRate()
+                    ac,
+                    monetaryUnit,
+                    lines,
+                    reportCriteria.getType().useInitialBalance(reportCriteria),
+                    new DefaultCurrencyProvider(currencyDAO),
+                    reportCriteria.getDayOfExchangeRate()
                 );
             } else {
                 List<AccountReportLine> lines =
-                        entryDAO.getAccountReportLines(
-                                accounts,
-                                reportCriteria.getRange(),
-                                reportCriteria.getType().useInitialBalance(reportCriteria)
-                        );
+                    entryDAO.getAccountReportLines(
+                        accounts,
+                        reportCriteria.getRange(),
+                        reportCriteria.getType().useInitialBalance(reportCriteria)
+                    );
                 linesArray[i] = new ReportLines(
-                        ac,
-                        monetaryUnit,
-                        lines,
-                        new DefaultCurrencyProvider(currencyDAO),
-                        reportCriteria.getDayOfExchangeRate()
+                    ac,
+                    monetaryUnit,
+                    lines,
+                    new DefaultCurrencyProvider(currencyDAO),
+                    reportCriteria.getDayOfExchangeRate()
                 );
             }
 
         }
 
         return linesArray;
+    }
+
+    @Override
+    public ChartDataPoints getChartDataPoints(ChartCriteria criteria) {
+        AccountDAO accountDAO = new AccountDAO();
+        EntryDAO entryDAO = new EntryDAO();
+
+        if (criteria.getAccountId() == null) {
+            return null;
+        }
+
+        Account account = accountDAO.getAccount(criteria.getAccountId());
+        if (account == null) {
+            return null;
+        }
+
+        List<ChartDataPoint> dataPoints =
+            entryDAO.getChartDataPoints(account, criteria.getRange(), criteria.getGroupOption());
+
+        return new ChartDataPoints(
+            account.getLabel(true, false, true, true),
+            account.getMonetaryUnit(),
+            dataPoints
+        );
     }
 }

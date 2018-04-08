@@ -17,6 +17,9 @@
 
 package org.fourthline.konto.server.dao;
 
+import org.fourthline.konto.shared.AccountType;
+import org.fourthline.konto.shared.query.ChartCriteria;
+import org.fourthline.konto.shared.result.ChartDataPoint;
 import org.hibernate.Query;
 import org.hibernate.transform.ResultTransformer;
 import org.seamless.util.time.DateRange;
@@ -33,12 +36,7 @@ import org.fourthline.konto.shared.result.LedgerLines;
 import org.fourthline.konto.shared.result.AccountReportLine;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Christian Bauer
@@ -50,15 +48,14 @@ public class EntryDAO extends HibernateDAO {
     }
 
     public Entry populateSplits(final Entry entry) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("select s, sa, eaUnit, saUnit from Entry e, Split s, ");
-        sb.append("Account ea, MonetaryUnit eaUnit, Account sa, MonetaryUnit saUnit");
-        sb.append(" where s.entryId = :entryId");
-        sb.append(" and e.id = s.entryId");
-        sb.append(" and ea.id = e.accountId and sa.id = s.accountId");
-        sb.append(" and ea.monetaryUnitId = eaUnit.id and sa.monetaryUnitId = saUnit.id");
+        String sb = "select s, sa, eaUnit, saUnit from Entry e, Split s, " +
+            "Account ea, MonetaryUnit eaUnit, Account sa, MonetaryUnit saUnit" +
+            " where s.entryId = :entryId" +
+            " and e.id = s.entryId" +
+            " and ea.id = e.accountId and sa.id = s.accountId" +
+            " and ea.monetaryUnitId = eaUnit.id and sa.monetaryUnitId = saUnit.id";
 
-        Query q = getCurrentSession().createQuery(sb.toString());
+        Query q = getCurrentSession().createQuery(sb);
         q.setLong("entryId", entry.getId());
 
         q.setResultTransformer(new ResultTransformer() {
@@ -83,15 +80,14 @@ public class EntryDAO extends HibernateDAO {
     }
 
     public Split getSplit(Long id) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("select s, sa, eaUnit, saUnit from Entry e, Split s, ");
-        sb.append("Account ea, MonetaryUnit eaUnit, Account sa, MonetaryUnit saUnit");
-        sb.append(" where e.id = s.entryId");
-        sb.append(" and ea.id = e.accountId and sa.id = s.accountId");
-        sb.append(" and ea.monetaryUnitId = eaUnit.id and sa.monetaryUnitId = saUnit.id");
-        sb.append(" and s.id = :id");
+        String sb = "select s, sa, eaUnit, saUnit from Entry e, Split s, " +
+            "Account ea, MonetaryUnit eaUnit, Account sa, MonetaryUnit saUnit" +
+            " where e.id = s.entryId" +
+            " and ea.id = e.accountId and sa.id = s.accountId" +
+            " and ea.monetaryUnitId = eaUnit.id and sa.monetaryUnitId = saUnit.id" +
+            " and s.id = :id";
 
-        Query q = getCurrentSession().createQuery(sb.toString());
+        Query q = getCurrentSession().createQuery(sb);
         q.setLong("id", id);
 
         q.setResultTransformer(new ResultTransformer() {
@@ -128,7 +124,7 @@ public class EntryDAO extends HibernateDAO {
                 // the starting balance up to our starting timepoint (minus one day)
                 Date oneDayBefore = criteria.getEffectiveOn().getOneDayBeforeStart();
                 List<AccountReportLine> balanceOfDayBefore =
-                        getAccountReportLines(Arrays.asList(account), new DateRange(null, oneDayBefore), true);
+                    getAccountReportLines(Collections.singletonList(account), new DateRange(null, oneDayBefore), true);
                 startingBalance = balanceOfDayBefore.get(0).getAmount();
             } else {
                 // Yes, we show all lines, so start with the account's initial balance
@@ -206,7 +202,7 @@ public class EntryDAO extends HibernateDAO {
 
         // TODO: Pagination?
 
-        final Map<Long, Entry> entries = new LinkedHashMap();
+        final Map<Long, Entry> entries = new LinkedHashMap<Long, Entry>();
 
         q.setResultTransformer(new ResultTransformer() {
             @Override
@@ -263,20 +259,20 @@ public class EntryDAO extends HibernateDAO {
 
         List<Object[]> result = q.list();
 
-        List<AccountReportLine> lines = new ArrayList(accounts.size());
+        List<AccountReportLine> lines = new ArrayList<>(accounts.size());
 
         for (Account account : accounts) {
 
             // Start with account's initial balance or zero, then add the query result balance
             MonetaryAmount amount =
-                    useInitialBalance
-                            ? account.getInitialBalance()
-                            : new MonetaryAmount(account.getMonetaryUnit());
+                useInitialBalance
+                    ? account.getInitialBalance()
+                    : new MonetaryAmount(account.getMonetaryUnit());
 
             for (Object[] r : result) {
                 if (account.getId().equals(r[0])) {
                     MonetaryAmount m =
-                            new MonetaryAmount(account.getMonetaryUnit(), (BigDecimal) r[1]);
+                        new MonetaryAmount(account.getMonetaryUnit(), (BigDecimal) r[1]);
                     amount = amount.add(m);
                     break;
                 }
@@ -298,7 +294,7 @@ public class EntryDAO extends HibernateDAO {
 
         List<Object[]> result = q.list();
 
-        Map<Account, List<EntryReportLine>> accountEntryLines = new LinkedHashMap(accounts.size());
+        Map<Account, List<EntryReportLine>> accountEntryLines = new LinkedHashMap<>(accounts.size());
 
         for (Account account : accounts) {
 
@@ -308,7 +304,7 @@ public class EntryDAO extends HibernateDAO {
 
                     List<EntryReportLine> lines;
                     if ((lines = accountEntryLines.get(account)) == null) {
-                        lines = new ArrayList();
+                        lines = new ArrayList<>();
                         accountEntryLines.put(account, lines);
                     }
 
@@ -322,24 +318,96 @@ public class EntryDAO extends HibernateDAO {
                     BigDecimal amount = (BigDecimal) r[8];
 
                     lines.add(
-                            new EntryReportLine(
-                                    description,
-                                    new MonetaryAmount(account.getMonetaryUnit(), amount),
-                                    new LedgerCoordinates(account.getId(), entryId, splitId),
-                                    effectiveOn,
-                                    fromToAccountId,
-                                    fromToAccountGroup,
-                                    fromToAccount
-                            )
+                        new EntryReportLine(
+                            description,
+                            new MonetaryAmount(account.getMonetaryUnit(), amount),
+                            new LedgerCoordinates(account.getId(), entryId, splitId),
+                            effectiveOn,
+                            fromToAccountId,
+                            fromToAccountGroup,
+                            fromToAccount
+                        )
                     );
                     haveEntries = true;
                 }
             }
             if (!haveEntries) {
-                accountEntryLines.put(account, new ArrayList());
+                accountEntryLines.put(account, new ArrayList<>());
             }
         }
         return accountEntryLines;
+    }
+
+    public List<ChartDataPoint> getChartDataPoints(Account account, DateRange dateRange, ChartCriteria.GroupOption groupOption) {
+
+        Query q;
+        if (groupOption == ChartCriteria.GroupOption.MONTHLY) {
+            q = getCurrentSession().getNamedQuery("sumOfAccountByMonth");
+        } else if (groupOption == ChartCriteria.GroupOption.YEARLY) {
+            q = getCurrentSession().getNamedQuery("sumOfAccountByYear");
+        } else {
+            throw new UnsupportedOperationException("Not implemented: " + groupOption);
+        }
+
+        q.setParameter("id", account.getId());
+
+        switch (account.getType()) {
+            case Asset:
+            case Liability:
+            case BankAccount:
+                // For asset/liability accounts we must get all previous entries to sum the balance
+                q.setDate("rangeStart", new Date(0, 0, 1));
+                break;
+            default:
+                // Default to 01.01.1900 -> Today if there is no start or end in the given date range
+                q.setDate("rangeStart", dateRange != null && dateRange.getStart() != null ? dateRange.getStart() : new Date(0, 0, 1));
+        }
+        q.setDate("rangeEnd", dateRange != null && dateRange.getEnd() != null ? dateRange.getEnd() : new Date());
+
+        List<Object[]> result = q.list();
+
+        List<ChartDataPoint> chartDataPoints = new ArrayList<>();
+
+        for (Object[] r : result) {
+            Integer year = (Integer) r[1];
+            Integer month = (Integer) r[2];
+            BigDecimal amount = (BigDecimal) r[3];
+            chartDataPoints.add(
+                new ChartDataPoint(
+                    year,
+                    month,
+                    new MonetaryAmount(account.getMonetaryUnit(), amount)
+                )
+            );
+        }
+
+        // For asset/liability accounts, sum balance for all datapoints, starting with initial balance
+        if (account.getType() == AccountType.Asset
+            || account.getType() == AccountType.Liability
+            || account.getType() == AccountType.BankAccount) {
+            MonetaryAmount balance = account.getInitialBalance();
+            for (ChartDataPoint chartDataPoint : chartDataPoints) {
+                chartDataPoint.setMonetaryAmount(
+                    balance.add(chartDataPoint.getMonetaryAmount())
+                );
+                balance = chartDataPoint.getMonetaryAmount();
+            }
+        } else if (account.getType() == AccountType.Income) {
+            for (ChartDataPoint chartDataPoint : chartDataPoints) {
+                chartDataPoint.setMonetaryAmount(
+                    chartDataPoint.getMonetaryAmount().negate()
+                );
+            }
+        }
+
+        // Remove all chart data points which are not in range (query might use a different range)
+        chartDataPoints.removeIf(chartDataPoint ->
+            dateRange != null
+                && dateRange.isValid()
+                && !dateRange.isInRange(new Date(chartDataPoint.getYear()-1900, chartDataPoint.getMonth() + 1, 0))
+        );
+
+        return chartDataPoints;
     }
 
     public void persist(Entry entry) {
@@ -373,8 +441,8 @@ public class EntryDAO extends HibernateDAO {
     public void deleteOrphanedEntries() {
         // Remove entries that now have no more splits
         getCurrentSession().createQuery(
-                "delete from Entry e where not e.id in " +
-                        "(select distinct(s.entryId) from Split s)"
+            "delete from Entry e where not e.id in " +
+                "(select distinct(s.entryId) from Split s)"
         ).executeUpdate();
     }
 

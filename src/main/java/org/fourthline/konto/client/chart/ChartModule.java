@@ -15,17 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.fourthline.konto.client.service;
+package org.fourthline.konto.client.chart;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.fourthline.konto.shared.query.ChartCriteria;
-import org.fourthline.konto.shared.query.LineReportCriteria;
-import org.fourthline.konto.shared.result.ChartDataPoints;
-import org.fourthline.konto.shared.result.ReportLines;
+import com.google.gwt.inject.client.AbstractGinModule;
+import com.google.inject.Singleton;
+import org.fourthline.konto.client.chart.view.*;
 
-public interface ReportServiceAsync {
+/**
+ * @author Christian Bauer
+ */
+public class ChartModule extends AbstractGinModule {
 
-    void getReportLines(LineReportCriteria criteria, AsyncCallback<ReportLines[]> async);
+    @Override
+    protected void configure() {
 
-    void getChartDataPoints(ChartCriteria criteria, AsyncCallback<ChartDataPoints> async);
+        bind(ChartView.class).to(ChartViewImpl.class).in(Singleton.class);
+        bind(ChartSelectView.class).to(ChartSelectViewImpl.class).in(Singleton.class);
+        bind(ChartResultView.class).to(ChartResultViewImpl.class).in(Singleton.class);
+
+    }
+
 }

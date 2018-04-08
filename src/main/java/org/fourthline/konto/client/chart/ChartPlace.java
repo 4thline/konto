@@ -15,49 +15,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.fourthline.konto.client.report;
+package org.fourthline.konto.client.chart;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
-import org.fourthline.konto.shared.query.LineReportCriteria;
+import org.fourthline.konto.shared.query.ChartCriteria;
 
 import java.io.Serializable;
 
 /**
  * @author Christian Bauer
  */
-public class ReportPlace extends Place implements Serializable {
+public class ChartPlace extends Place implements Serializable {
 
-    LineReportCriteria criteria;
+    ChartCriteria criteria;
 
-    public ReportPlace() {
+    public ChartPlace() {
     }
 
-    public ReportPlace(LineReportCriteria criteria) {
+    public ChartPlace(ChartCriteria criteria) {
         this.criteria = criteria;
     }
 
-    public LineReportCriteria getCriteria() {
+    public ChartCriteria getCriteria() {
         return criteria;
     }
 
     @Override
     public String toString() {
-        return "ReportPlace: " + getCriteria();
+        return "ChartPlace: " + getCriteria();
     }
 
-    @Prefix("report")
-    public static class Tokenizer implements PlaceTokenizer<ReportPlace> {
+    @Prefix("chart")
+    public static class Tokenizer implements PlaceTokenizer<ChartPlace> {
 
         @Override
-        public ReportPlace getPlace(String token) {
-            if ("index".equals(token)) return new ReportPlace();
-            return new ReportPlace(LineReportCriteria.valueOf(token));
+        public ChartPlace getPlace(String token) {
+            if ("index".equals(token)) return new ChartPlace();
+            return new ChartPlace(ChartCriteria.valueOf(token));
         }
 
         @Override
-        public String getToken(ReportPlace place) {
+        public String getToken(ChartPlace place) {
             return place.getCriteria() != null ? place.getCriteria().toString() : "index";
         }
     }

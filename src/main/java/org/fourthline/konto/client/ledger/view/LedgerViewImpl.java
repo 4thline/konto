@@ -31,11 +31,13 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
 import org.fourthline.konto.client.bundle.Bundle;
+import org.fourthline.konto.client.chart.ChartPlace;
 import org.fourthline.konto.client.currency.CurrencyPlace;
 import org.fourthline.konto.client.ledger.LedgerPlace;
 import org.fourthline.konto.client.ledger.account.AccountPlace;
 import org.fourthline.konto.shared.LedgerCoordinates;
 import org.fourthline.konto.shared.entity.Account;
+import org.fourthline.konto.shared.query.ChartCriteria;
 import org.fourthline.konto.shared.result.LedgerLine;
 import org.fourthline.konto.shared.result.LedgerLines;
 import org.seamless.gwt.component.client.widget.DateRangeSelect;
@@ -103,6 +105,9 @@ public class LedgerViewImpl extends Composite implements LedgerView {
     GhostedTextBox descriptionFilterTextBox;
     @UiField
     Button descriptionFilterClearButton;
+
+    @UiField
+    ImageTextButton showChartButton;
 
     @UiField
     ImageTextButton addEntryButton;
@@ -327,6 +332,12 @@ public class LedgerViewImpl extends Composite implements LedgerView {
     void onClickAddEntryButton(ClickEvent e) {
         if (presenter != null)
             presenter.addLine();
+    }
+
+    @UiHandler("showChartButton")
+    void onClickShowChartButton(ClickEvent e) {
+        if (presenter != null)
+            presenter.showChart();
     }
 
     @UiHandler("descriptionFilterClearButton")

@@ -9,32 +9,23 @@
         <property name="connection.driver_class">org.h2.Driver</property>
         <property name="dialect">org.hibernate.dialect.H2Dialect</property>
 
-        <!--
-            For unit testing or zero-config deployment, an in-memory temporary database
+        <!-- ############# DEV SETTINGS ################# -->
+        <!-- For unit testing or zero-config deployment, an in-memory temporary
+             database with auto schema drop-create
         -->
         <property name="connection.url">jdbc:h2:mem:test</property>
-
-        <!--
-            Temporary but external H2 instance, useful for development.
-            <property name="connection.url">jdbc:h2:tcp://localhost/mem:test</property>
-        -->
-
-        <!--
-            Only for temporary databases and unit testing, drop-create the schema
-            on startup
-        -->
         <property name="hbm2ddl.auto">create</property>
 
-        <!--
-            Production settings with external persistent DBMS instance
-
-            <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
-            <property name="hibernate.c3p0.acquire_increment">1</property>
-            <property name="hibernate.c3p0.idle_test_period">100</property>
-            <property name="hibernate.c3p0.min_size">3</property>
-            <property name="hibernate.c3p0.max_size">10</property>
-            <property name="hibernate.c3p0.timeout">600</property>
-            <property name="hibernate.c3p0.max_statements">0</property>
+        <!-- ############# PROD SETTINGS ################# -->
+        <!-- External persistent DBMS instance
+        <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+        <property name="connection.url">jdbc:h2:tcp://localhost:9093/konto</property>
+        <property name="hibernate.c3p0.acquire_increment">1</property>
+        <property name="hibernate.c3p0.idle_test_period">100</property>
+        <property name="hibernate.c3p0.min_size">3</property>
+        <property name="hibernate.c3p0.max_size">10</property>
+        <property name="hibernate.c3p0.timeout">600</property>
+        <property name="hibernate.c3p0.max_statements">0</property>
         -->
 
         <!-- Batch updates swallow FK constraint violations -->

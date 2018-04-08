@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import org.fourthline.konto.client.bundle.Bundle;
-import org.fourthline.konto.client.report.LineReportType;
+import org.fourthline.konto.client.report.ReportType;
 import org.fourthline.konto.shared.Constants;
 import org.seamless.gwt.component.client.widget.AutocompleteDateTextBox;
 import org.seamless.gwt.component.client.widget.DateRangeSelect;
@@ -99,7 +99,7 @@ public class ReportSelectViewImpl extends Composite implements ReportSelectView 
         typeListBox.addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent event) {
-                presenter.onReportTypeSelected(LineReportType.values()[typeListBox.getSelectedIndex()]);
+                presenter.onReportTypeSelected(ReportType.values()[typeListBox.getSelectedIndex()]);
             }
         });
 
@@ -185,12 +185,12 @@ public class ReportSelectViewImpl extends Composite implements ReportSelectView 
     }
 
     @Override
-    public LineReportType getReportType() {
-        return LineReportType.values()[typeListBox.getSelectedIndex()];
+    public ReportType getReportType() {
+        return ReportType.values()[typeListBox.getSelectedIndex()];
     }
 
     @Override
-    public DateRange getDateRange(LineReportType type) {
+    public DateRange getDateRange(ReportType type) {
         if (ReportSelectView.Option.USE_DATE_RANGE.in(type.getReportSelectOptions())) {
             return dateRangeSelect.getValue() != null ? dateRangeSelect.getValue() : new DateRange();
         } else {
@@ -275,14 +275,14 @@ public class ReportSelectViewImpl extends Composite implements ReportSelectView 
         initTypeListBox(null);
     }
 
-    protected void initTypeListBox(LineReportType selected) {
+    protected void initTypeListBox(ReportType selected) {
         typeListBox.clear();
-        for (LineReportType t : LineReportType.values()) {
+        for (ReportType t : ReportType.values()) {
             typeListBox.addItem(t.getLabel());
         }
 
-        for (int i = 0; i < LineReportType.values().length; i++) {
-            LineReportType rt = LineReportType.values()[i];
+        for (int i = 0; i < ReportType.values().length; i++) {
+            ReportType rt = ReportType.values()[i];
             if (rt.equals(selected)) {
                 typeListBox.setSelectedIndex(i);
                 break;

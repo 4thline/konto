@@ -8,7 +8,7 @@
 
     <groupId>org.fourthline.konto</groupId>
     <artifactId>konto</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>war</packaging>
 
     <!-- ##################################################################################################### -->
@@ -58,10 +58,10 @@
         <test-jul-config-file>${basedir}/src/test/logging.properties</test-jul-config-file>
 
         <seamless.version>1.0.0</seamless.version>
-        <testng.version>5.14.9</testng.version>
+        <testng.version>6.14.2</testng.version>
         <javax.inject.version>1</javax.inject.version>
-        <gwt.maven.plugin.version>2.7.0</gwt.maven.plugin.version>
-        <gwt.version>2.7.0</gwt.version>
+        <gwt.maven.plugin.version>2.8.2</gwt.maven.plugin.version>
+        <gwt.version>2.8.2</gwt.version>
         <gin.version>2.1.2</gin.version>
         <hibernate.core.version>3.6.0.Final</hibernate.core.version>
         <hibernate.validator.version>4.1.0.Final</hibernate.validator.version>
@@ -130,14 +130,37 @@
                     <artifactId>gwt-maven-plugin</artifactId>
                     <version>${gwt.maven.plugin.version}</version>
                     <configuration>
-                        <style>OBFUSCATED</style>
+                        <logLevel>INFO</logLevel>
+                        <style>PRETTY</style>
+
                         <!--
                             Can't disable these unneeded artifacts, so compile
                             them outside of the target WAR
                          -->
                         <deploy>${project.build.directory}/gwt-deploy</deploy>
                         <outputDirectory>${project.build.directory}/${project.artifactId}.war</outputDirectory>
+
+                        <!-- SDM configuration -->
+                        <launcherDir>${project.build.directory}/konto.war/</launcherDir>
+                        <incremental>false</incremental>
+                        <precompile>false</precompile>
+
                     </configuration>
+                    <executions>
+                        <execution>
+                            <id>gwt-compile</id>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>gwt-clean</id>
+                            <phase>clean</phase>
+                            <goals>
+                                <goal>clean</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
 
                 <!-- Unit tests -->
@@ -310,9 +333,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
 
@@ -357,10 +381,6 @@
                 <exclusion>
                     <groupId>org.yaml</groupId>
                     <artifactId>snakeyaml</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.beanshell</groupId>
-                    <artifactId>bsh</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -436,6 +456,12 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-c3p0</artifactId>
             <version>${hibernate.core.version}</version>
         </dependency>
 
