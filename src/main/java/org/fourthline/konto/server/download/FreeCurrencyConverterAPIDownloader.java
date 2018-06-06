@@ -18,7 +18,6 @@
 package org.fourthline.konto.server.download;
 
 import com.eclipsesource.json.Json;
-import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 import org.fourthline.konto.server.dao.CurrencyDAO;
 import org.fourthline.konto.shared.entity.CurrencyPair;
@@ -30,61 +29,36 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Christian Bauer
  */
-public class FixerIOCurrencyDownloader extends CurrencyDownloader {
+public class FreeCurrencyConverterAPIDownloader extends CurrencyDownloader {
 
     public static final String BASE_URL =
-        "https://api.fixer.io/latest?base=%s&symbols=%s";
+        "http://free.currencyconverterapi.com/api/v5/convert?q=%s&compact=y";
 
-    public FixerIOCurrencyDownloader(CurrencyDAO currencyDAO) {
+    public FreeCurrencyConverterAPIDownloader(CurrencyDAO currencyDAO) {
         super(currencyDAO);
     }
 
     @Override
     protected void updateExchangeRates(List<CurrencyPair> pairs) throws Exception {
-
-        Map<String, List<String>> pairGroups = new HashMap<String, List<String>>();
         for (CurrencyPair pair : pairs) {
-            if (!pairGroups.containsKey(pair.getFromCode())) {
-                pairGroups.put(pair.getFromCode(), new ArrayList<String>());
-            }
-            List<String> group = pairGroups.get(pair.getFromCode());
-            group.add(pair.getToCode());
-        }
 
-        for (Map.Entry<String, List<String>> entry : pairGroups.entrySet()) {
+            String pairCode = pair.getFromCode() + "_" + pair.getToCode();
 
-            StringBuilder groupString = new StringBuilder();
-            for (String s : entry.getValue()) {
-                groupString.append(s).append(",");
-            }
-            if (groupString.length() > 0)
-                groupString.deleteCharAt(groupString.length()-1);
-
-            String result = retrieveExchangeRates(new URL(String.format(BASE_URL, entry.getKey(), groupString)));
+            String result = retrieveExchangeRates(new URL(String.format(BASE_URL, pairCode)));
             if (result == null)
                 return;
 
             JsonValue json = Json.parse(result);
-            for (CurrencyPair pair : pairs) {
-                if (json.asObject().get("base").asString().equals(pair.getFromCode())) {
-                    JsonObject rates = json.asObject().get("rates").asObject();
-                    for (String rateName : rates.names()) {
-                        if (rateName.equals((pair.getToCode()))) {
-                            pair.setExchangeRate(
-                                new BigDecimal(rates.get(rateName).asDouble()).setScale(CurrencyPair.SCALE, RoundingMode.HALF_UP)
-                            );
-                        }
-                    }
-                }
-            }
+            pair.setExchangeRate(
+                new BigDecimal(
+                    json.asObject().get(pairCode).asObject().getDouble("val", 1)
+                ).setScale(CurrencyPair.SCALE, RoundingMode.HALF_UP)
+            );
         }
     }
 
