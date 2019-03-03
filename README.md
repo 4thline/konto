@@ -1,4 +1,14 @@
-# Konto
+# Konto - AGPLv3 double-entry ledger accounting webapp
+
+!(/konto_screenshot01.png?raw=true)
+
+## Installation
+
+[Download the latest web application release](https://github.com/4thline/konto/releases). Get a Servlet 2.5 compatible container and deploy the WAR. An in-memory temporary H2 DBMS instance will be used.
+
+If you want to use a permanent external H2 DBMS instance, unpack the WAR and edit the `WEB-INF/classes/hibernate.cfg.xml` file. Then repack the WAR and deploy. Also edit and deploy the `/sql/database-init-schema.sql` as needed, import it on your DBMS.
+
+If you want to use a different database, recreate the SQL file(s) with `mvn package` after you edit the `src/main/resources/hibernate.cfg.xml` file.
 
 ## Development IDE setup
 
