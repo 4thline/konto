@@ -29,8 +29,6 @@ import java.util.List;
  */
 public abstract class CurrencyDownloader {
 
-    public static final int BATCH_SIZE = 5;
-
     final protected CurrencyDAO currencyDAO;
 
     protected CurrencyDownloader(CurrencyDAO currencyDAO) {
@@ -56,7 +54,7 @@ public abstract class CurrencyDownloader {
 
         List<CurrencyPair> batch = new ArrayList();
         for (CurrencyPair p : pairs) {
-            if (batch.size() == BATCH_SIZE) {
+            if (batch.size() == ExchangeRatesAPIDownloader.BATCH_SIZE) {
                 updateExchangeRates(batch);
                 persist(batch);
                 batch.clear();

@@ -20,7 +20,7 @@ package org.fourthline.konto.server.service;
 import org.fourthline.konto.client.service.CurrencyService;
 import org.fourthline.konto.server.dao.CurrencyDAO;
 import org.fourthline.konto.server.download.CurrencyDownloader;
-import org.fourthline.konto.server.download.FreeCurrencyConverterAPIDownloader;
+import org.fourthline.konto.server.download.ExchangeRatesAPIDownloader;
 import org.fourthline.konto.shared.entity.CurrencyPair;
 import org.fourthline.konto.shared.entity.MonetaryUnit;
 import org.seamless.gwt.server.HibernateRemoteServiceServlet;
@@ -101,7 +101,7 @@ public class CurrencyServiceImpl extends HibernateRemoteServiceServlet implement
     public String download(CurrencyPair pair) {
         try {
             CurrencyDAO currencyDAO = new CurrencyDAO();
-            CurrencyDownloader downloader = new FreeCurrencyConverterAPIDownloader(currencyDAO);
+            CurrencyDownloader downloader = new ExchangeRatesAPIDownloader(currencyDAO);
             downloader.updateCurrencies(pair);
             return null;
         } catch (Exception ex) {

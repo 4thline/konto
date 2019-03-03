@@ -8,7 +8,7 @@
 
     <groupId>org.fourthline.konto</groupId>
     <artifactId>konto</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <packaging>war</packaging>
 
     <!-- ##################################################################################################### -->
@@ -43,13 +43,6 @@
         </developer>
     </developers>
 
-    <distributionManagement>
-        <repository>
-            <id>4thline.org</id>
-            <url>scpexe://4thline.org/webroot/vhosts/8080/4thline.org/m2/</url>
-        </repository>
-    </distributionManagement>
-
     <!-- ##################################################################################################### -->
 
     <properties>
@@ -60,7 +53,7 @@
         <seamless.version>1.0.0</seamless.version>
         <testng.version>6.14.2</testng.version>
         <javax.inject.version>1</javax.inject.version>
-        <gwt.maven.plugin.version>2.8.2</gwt.maven.plugin.version>
+        <gwt.maven.plugin.version>1.0-rc-10</gwt.maven.plugin.version>
         <gwt.version>2.8.2</gwt.version>
         <gin.version>2.1.2</gin.version>
         <hibernate.core.version>3.6.0.Final</hibernate.core.version>
@@ -118,7 +111,7 @@
         <pluginManagement>
             <plugins>
 
-                <!-- Ant fallback -->
+                <!-- Ant fallback for hbm2ddl -->
                 <plugin>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>1.3</version>
@@ -126,12 +119,19 @@
 
                 <!-- GWT -->
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
+                    <groupId>net.ltgt.gwt.maven</groupId>
                     <artifactId>gwt-maven-plugin</artifactId>
                     <version>${gwt.maven.plugin.version}</version>
                     <configuration>
+                        <!-- Why is this not the default? Why would GWT be in the runtime classpath? -->
+                        <classpathScope>compile</classpathScope>
+
+                        <moduleName>org.fourthline.konto.Konto</moduleName>
+
+                        <skipModule>true</skipModule>
+
                         <logLevel>INFO</logLevel>
-                        <style>PRETTY</style>
+                        <style>OBFUSCATED</style>
 
                         <!--
                             Can't disable these unneeded artifacts, so compile
@@ -140,33 +140,16 @@
                         <deploy>${project.build.directory}/gwt-deploy</deploy>
                         <outputDirectory>${project.build.directory}/${project.artifactId}.war</outputDirectory>
 
-                        <!-- SDM configuration -->
-                        <launcherDir>${project.build.directory}/konto.war/</launcherDir>
-                        <incremental>false</incremental>
-                        <precompile>false</precompile>
+                        <!-- Codeserver output when developing -->
+                        <launcherDir>${project.build.directory}/konto-${project.version}/</launcherDir>
 
                     </configuration>
-                    <executions>
-                        <execution>
-                            <id>gwt-compile</id>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>gwt-clean</id>
-                            <phase>clean</phase>
-                            <goals>
-                                <goal>clean</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
 
                 <!-- Unit tests -->
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>2.22.1</version>
                     <configuration>
                         <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         <systemProperties>
@@ -208,26 +191,7 @@
                 <!-- Assembly -->
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.2.1</version>
-                </plugin>
-
-                <!-- Deploy phase -->
-                <plugin>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.5</version>
-                </plugin>
-
-                <!-- Website lifecycle -->
-                <plugin>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.3</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.maven.doxia</groupId>
-                            <artifactId>doxia-module-xhtml</artifactId>
-                            <version>1.1.2</version>
-                        </dependency>
-                    </dependencies>
+                    <version>3.1.1</version>
                 </plugin>
 
             </plugins>
@@ -239,15 +203,12 @@
             <!-- Waaargh -->
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <webappDirectory>${project.build.directory}/${project.artifactId}.war</webappDirectory>
-                </configuration>
+                <version>3.2.2</version>
             </plugin>
 
             <!-- Compile GWT client for packaging -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>net.ltgt.gwt.maven</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <executions>
                     <execution>
@@ -296,7 +257,7 @@
                 </executions>
                 <configuration>
                     <descriptors>
-                        <descriptor>src/dist/assembly.xml</descriptor>
+                        <descriptor>src/assembly.xml</descriptor>
                     </descriptors>
                     <workDirectory>target/assembly/work</workDirectory>
                     <appendAssemblyId>false</appendAssemblyId>
@@ -305,35 +266,10 @@
                 </configuration>
             </plugin>
 
-
-            <!-- Cleanup the crap produced by the site plugin... -->
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>finalize-site</id>
-                        <phase>post-site</phase>
-                        <configuration>
-                            <tasks>
-                                <delete dir="${project.reporting.outputDirectory}/css"/>
-                                <move todir="${project.reporting.outputDirectory}">
-                                    <fileset dir="${project.reporting.outputDirectory}">
-                                        <include name="**/*.html"/>
-                                    </fileset>
-                                    <mapper type="glob" from="*.html" to="*.xhtml"/>
-                                </move>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.0</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -341,23 +277,7 @@
             </plugin>
 
         </plugins>
-
-        <!-- Required for we-don't-care-about-compatibility-Maven3 'deploy' goal -->
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh-external</artifactId>
-                <version>1.0-beta-7</version>
-            </extension>
-        </extensions>
-
     </build>
-
-    <!-- ##################################################################################################### -->
-
-    <reporting>
-        <excludeDefaults>true</excludeDefaults>
-    </reporting>
 
     <!-- ##################################################################################################### -->
 
@@ -441,7 +361,7 @@
 
         <dependency>
             <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-codeserver</artifactId>
+            <artifactId>gwt-dev</artifactId>
             <version>${gwt.version}</version>
             <scope>provided</scope>
         </dependency>

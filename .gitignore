@@ -2,3 +2,4 @@
 .idea
 .local
 .docker
+target/
