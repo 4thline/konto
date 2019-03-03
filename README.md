@@ -1,6 +1,6 @@
 # Konto - AGPLv3 double-entry ledger accounting webapp
 
-!(/konto_screenshot01.png?raw=true)
+![Konto Screenshot](konto_screenshot01.png)
 
 ## Installation
 
