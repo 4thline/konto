@@ -1,6 +1,5 @@
 # Konto - AGPLv3 double-entry ledger accounting webapp
 
----
 ![Konto Screenshot](konto-screenshot01.png)
 ---
 
